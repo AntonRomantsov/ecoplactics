@@ -1,0 +1,468 @@
+{{ header }}
+<div id="checkout-checkout" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h1>{{ heading_title }}</h1>
+
+      <div class="checkout-step">
+        <h3>{{ text_your_details }}</h3>
+        <div class="panel-body">
+          {% if not logged %}
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-firstname">{{ entry_firstname }}</label>
+            <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-payment-firstname" class="form-control" />
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-lastname">{{ entry_lastname }}</label>
+            <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-payment-lastname" class="form-control" />
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-email">{{ entry_email }}</label>
+            <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-payment-email" class="form-control" />
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-telephone">{{ entry_telephone }}</label>
+            <input type="text" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-payment-telephone" class="form-control" />
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if shipping_required %}
+      <div class="checkout-step">
+        <div id="collapse-shipping-method">
+          <div class="panel-body"></div>
+        </div>
+      </div>
+
+      <div class="checkout-step">
+        <h3>Адреса доставки</h3>
+        <div class="panel-body">
+          <div class="form-group required">
+            <label class="control-label" for="input-shipping-city">{{ entry_city }}</label>
+            <div style="position:relative;">
+              <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-shipping-city" class="form-control" autocomplete="off" />
+              <input type="hidden" name="city_ref" id="input-shipping-city-ref" value="" />
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-shipping-address-1">{{ entry_address_1 }}</label>
+            <div style="position:relative;">
+              <input type="text" name="address_1" value="{{ address_1 }}" placeholder="{{ entry_address_1 }}" id="input-shipping-address-1" class="form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="checkout-step">
+        <div id="collapse-payment-method">
+          <div class="panel-body"></div>
+        </div>
+      </div>
+
+      <div class="checkout-step">
+        <div class="buttons">
+          <div class="pull-right">
+            <input type="button" value="Оформити замовлення" id="button-place-order" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg" />
+          </div>
+        </div>
+      </div>
+
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+</div>
+<script type="text/javascript"><!--
+// ecoplastics: single flat checkout form. Every field is visible on one
+// page (no accordion, no per-field auto-save) and a single "Place order"
+// button runs through the underlying OpenCart checkout steps in sequence
+// (contact/billing -> delivery address -> shipping method -> payment
+// method -> confirm/place order), stopping and showing an inline error
+// at whichever step rejects it.
+
+function ecoAlertError(container, message) {
+	$(container + ' .panel-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+}
+
+function ecoFieldErrors(prefix, errors) {
+	for (var i in errors) {
+		if (i === 'warning') continue;
+
+		var element = $('#input-' + prefix + '-' + i.replace(/_/g, '-'));
+
+		if (element.length) {
+			if (element.parent().hasClass('input-group')) {
+				element.parent().after('<div class="text-danger">' + errors[i] + '</div>');
+			} else {
+				element.after('<div class="text-danger">' + errors[i] + '</div>');
+			}
+			element.closest('.form-group').addClass('has-error');
+		}
+	}
+}
+
+function ecoClearErrors() {
+	$('.checkout-step .alert-dismissible, .checkout-step .text-danger').remove();
+	$('.checkout-step .form-group').removeClass('has-error');
+}
+
+function ecoLoad(container, url, callback) {
+	$.ajax({
+		url: url,
+		dataType: 'html',
+		success: function(html) {
+			$(container + ' .panel-body').html(html);
+			if (callback) callback();
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+// Sequenced (not parallel) for the same session-race reason as
+// ecoResyncMethods below.
+{% if shipping_required %}
+ecoLoad('#collapse-shipping-method', 'index.php?route=checkout/shipping_method', function() {
+	ecoLoad('#collapse-payment-method', 'index.php?route=checkout/payment_method');
+});
+{% else %}
+ecoLoad('#collapse-payment-method', 'index.php?route=checkout/payment_method');
+{% endif %}
+
+// Nova Poshta autocomplete on the static city/address fields, gated on
+// whichever shipping method is currently selected (tracked live, since
+// the fields never reload).
+var ecoShippingMethodCode = '{{ shipping_method_code }}';
+
+$(document).on('change', 'input[name=\'shipping_method\']', function() {
+	ecoShippingMethodCode = $(this).val();
+});
+
+(function() {
+	var cityInput = $('#input-shipping-city');
+	var cityRefInput = $('#input-shipping-city-ref');
+	var addressInput = $('#input-shipping-address-1');
+
+	if (!cityInput.length) {
+		return;
+	}
+
+	var cityList = $('<ul class="list-group" style="position:absolute;z-index:1000;max-height:220px;overflow-y:auto;width:100%;"></ul>').appendTo(cityInput.parent());
+	var addressList = $('<ul class="list-group" style="position:absolute;z-index:1000;max-height:220px;overflow-y:auto;width:100%;"></ul>').appendTo(addressInput.parent());
+	var cityTimer, addressTimer;
+
+	function npActive() {
+		return ecoShippingMethodCode === 'novaposhta.warehouse' || ecoShippingMethodCode === 'novaposhta.locker';
+	}
+
+	cityInput.on('input', function() {
+		cityRefInput.val('');
+		clearTimeout(cityTimer);
+
+		if (!npActive()) {
+			cityList.empty();
+			return;
+		}
+
+		var q = cityInput.val();
+		if (q.length < 2) { cityList.empty(); return; }
+		cityTimer = setTimeout(function() {
+			$.ajax({
+				url: 'index.php?route=extension/shipping/novaposhta/cities&q=' + encodeURIComponent(q),
+				dataType: 'json',
+				success: function(list) {
+					cityList.empty();
+					$.each(list, function(i, item) {
+						$('<a href="#" class="list-group-item"></a>').text(item.title).on('click', function(e) {
+							e.preventDefault();
+							cityInput.val(item.title);
+							cityRefInput.val(item.ref);
+							cityList.empty();
+							addressInput.val('');
+						}).appendTo(cityList);
+					});
+				}
+			});
+		}, 350);
+	});
+
+	addressInput.on('focus input', function() {
+		if (!npActive()) {
+			addressList.empty();
+			return;
+		}
+
+		var cityRef = cityRefInput.val();
+		if (!cityRef) { return; }
+		clearTimeout(addressTimer);
+		var q = addressInput.val();
+		var type = (ecoShippingMethodCode === 'novaposhta.locker') ? 'locker' : 'warehouse';
+		addressTimer = setTimeout(function() {
+			$.ajax({
+				url: 'index.php?route=extension/shipping/novaposhta/warehouses&city_ref=' + encodeURIComponent(cityRef) + '&type=' + type + '&q=' + encodeURIComponent(q),
+				dataType: 'json',
+				success: function(list) {
+					addressList.empty();
+					$.each(list, function(i, item) {
+						$('<a href="#" class="list-group-item"></a>').text(item.description).on('click', function(e) {
+							e.preventDefault();
+							addressInput.val(item.description);
+							addressList.empty();
+						}).appendTo(addressList);
+					});
+				}
+			});
+		}, 350);
+	});
+
+	$(document).on('click', function(e) {
+		if (!$(e.target).closest(cityInput.parent()).length) { cityList.empty(); }
+		if (!$(e.target).closest(addressInput.parent()).length) { addressList.empty(); }
+	});
+})();
+
+// Place order - runs the whole checkout sequence in one go.
+function ecoPlaceOrder() {
+	ecoClearErrors();
+	$('#button-place-order').button('loading');
+
+	var addressRoute = {% if logged %}'checkout/payment_address/save'{% else %}'checkout/guest/save'{% endif %};
+	var addressData = {
+		firstname: $('#input-payment-firstname').val() || '',
+		lastname: $('#input-payment-lastname').val() || '',
+		email: $('#input-payment-email').val() || '',
+		telephone: $('#input-payment-telephone').val() || '',
+		company: '',
+		address_1: 'Нова Пошта',
+		address_2: '',
+		city: 'Україна',
+		postcode: '',
+		country_id: '{{ country_id }}',
+		zone_id: '0',
+		shipping_address: '1'
+	};
+
+	$.ajax({
+		url: 'index.php?route=' + addressRoute,
+		type: 'post',
+		data: addressData,
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('.checkout-step', json['error']['warning']);
+				}
+				ecoFieldErrors('payment', json['error']);
+			} else {
+				ecoPlaceOrderShipping();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+// Saving the contact/address steps clears the cached shipping/payment
+// quotes server-side (address changed - standard OpenCart behaviour), so
+// they must be silently recomputed before reading/submitting whichever
+// method the user picked from the (now stale) rendered radio buttons.
+//
+// IMPORTANT: these two requests must run one after the other, never in
+// parallel. OpenCart's session storage (system/library/session/file.php)
+// reads the session file, releases its lock immediately, and only writes
+// the *entire* session array back at the very end of the request. Two
+// concurrent requests both read the same starting state and then each
+// overwrite the whole file with their own copy - whichever finishes last
+// wins, silently discarding the other's change. Running them in sequence
+// avoids the race entirely.
+function ecoResyncMethods(callback) {
+	function fail(xhr, ajaxOptions, thrownError) {
+		$('#button-place-order').button('reset');
+		alert(thrownError + "\r\n" + (xhr ? xhr.statusText : '') + "\r\n" + (xhr ? xhr.responseText : ''));
+	}
+
+	{% if shipping_required %}
+	$.ajax({ url: 'index.php?route=checkout/shipping_method', dataType: 'html' })
+		.done(function() {
+			$.ajax({ url: 'index.php?route=checkout/payment_method', dataType: 'html' })
+				.done(callback)
+				.fail(fail);
+		})
+		.fail(fail);
+	{% else %}
+	$.ajax({ url: 'index.php?route=checkout/payment_method', dataType: 'html' })
+		.done(callback)
+		.fail(fail);
+	{% endif %}
+}
+
+function ecoPlaceOrderShipping() {
+	{% if not shipping_required %}
+	ecoResyncMethods(ecoPlaceOrderMethod);
+	return;
+	{% endif %}
+
+	var shippingRoute = {% if logged %}'checkout/shipping_address/save'{% else %}'checkout/guest_shipping/save'{% endif %};
+	var shippingData = {
+		city: $('#input-shipping-city').val() || '',
+		address_1: $('#input-shipping-address-1').val() || '',
+		company: '',
+		address_2: '',
+		country_id: '{{ country_id }}',
+		zone_id: '0'
+	};
+
+	$.ajax({
+		url: 'index.php?route=' + shippingRoute,
+		type: 'post',
+		data: shippingData,
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('.checkout-step', json['error']['warning']);
+				}
+				ecoFieldErrors('shipping', json['error']);
+			} else {
+				ecoResyncMethods(ecoPlaceOrderMethod);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function ecoPlaceOrderMethod() {
+	{% if not shipping_required %}
+	ecoPlaceOrderPayment();
+	return;
+	{% endif %}
+
+	var method = $('#collapse-shipping-method input[name=\'shipping_method\']:checked').val();
+
+	if (!method) {
+		$('#button-place-order').button('reset');
+		ecoAlertError('#collapse-shipping-method', '{{ error_shipping }}');
+		return;
+	}
+
+	$.ajax({
+		url: 'index.php?route=checkout/shipping_method/save',
+		type: 'post',
+		data: { shipping_method: method },
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('#collapse-shipping-method', json['error']['warning']);
+				}
+			} else {
+				ecoPlaceOrderPayment();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function ecoPlaceOrderPayment() {
+	var paymentData = $('#collapse-payment-method input[type=\'radio\']:checked, #collapse-payment-method input[type=\'checkbox\']:checked, #collapse-payment-method textarea');
+
+	$.ajax({
+		url: 'index.php?route=checkout/payment_method/save',
+		type: 'post',
+		data: paymentData,
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('#collapse-payment-method', json['error']['warning']);
+				}
+			} else {
+				ecoPlaceOrderConfirm();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function ecoPlaceOrderConfirm() {
+	$.ajax({
+		url: 'index.php?route=checkout/confirm',
+		dataType: 'html',
+		success: function(html) {
+			// checkout/confirm creates the order and returns the selected
+			// payment extension's own markup (cod.twig / free_checkout.twig),
+			// which self-binds a #button-confirm click handler that finishes
+			// the order and redirects to the success page. Run it off-screen
+			// and trigger that click automatically - one button click on this
+			// page is enough, no separate visible confirmation stage.
+			var hidden = $('<div style="display:none;"></div>').appendTo('body').html(html);
+
+			if ($('#button-confirm', hidden).length) {
+				$('#button-confirm').trigger('click');
+			} else {
+				// Unknown payment extension with no #button-confirm of its
+				// own - fall back to showing it so the order can still be
+				// completed manually.
+				$('#button-place-order').button('reset').hide();
+				hidden.removeAttr('style').insertAfter('#button-place-order');
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+$(document).delegate('#button-place-order', 'click', ecoPlaceOrder);
+//--></script>
+{{ footer }}
+			
+            
+                    
+						
+                            
+                            
+						
+					

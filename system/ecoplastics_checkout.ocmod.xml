@@ -1,0 +1,3836 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>Checkout: flat single-page form, one place-order button, testopencart-style field redistribution</name>
+  <code>ecoplastics_checkout</code>
+  <author>ecoplastics</author>
+  <version>4.0.0</version>
+  <link>https://ecoplastics.telbot-test.space/</link>
+  <!-- checkout.php step-number sprintf() calls are NOT OCMOD-patchable - see README.
+       Step titles removed entirely in v2, so this no longer matters. -->
+  <file path="catalog/view/theme/default/template/checkout/checkout.twig">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\{\{ header \}\}
+\<div id\="checkout\-checkout" class\="container"\>
+  \<ul class\="breadcrumb"\>
+    \{% for breadcrumb in breadcrumbs %\}
+    \<li\>\<a href\="\{\{ breadcrumb\.href \}\}"\>\{\{ breadcrumb\.text \}\}\</a\>\</li\>
+    \{% endfor %\}
+  \</ul\>
+  \{% if error_warning %\}
+  \<div class\="alert alert\-danger alert\-dismissible"\>\<i class\="fa fa\-exclamation\-circle"\>\</i\> \{\{ error_warning \}\}
+    \<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>
+  \</div\>
+  \{% endif %\}
+  \<div class\="row"\>\{\{ column_left \}\}
+    \{% if column_left and column_right %\}
+    \{% set class \= 'col\-sm\-6' %\}
+    \{% elseif column_left or column_right %\}
+    \{% set class \= 'col\-sm\-9' %\}
+    \{% else %\}
+    \{% set class \= 'col\-sm\-12' %\}
+    \{% endif %\}
+    \<div id\="content" class\="\{\{ class \}\}"\>\{\{ content_top \}\}
+      \<h1\>\{\{ heading_title \}\}\</h1\>
+      \<div class\="panel\-group" id\="accordion"\>
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_option \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-checkout\-option"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+        \{% if not logged and account \!\= 'guest' %\}
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_account \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-payment\-address"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+        \{% else %\}
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_payment_address \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-payment\-address"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+        \{% endif %\}
+        \{% if shipping_required %\}
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_shipping_address \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-shipping\-address"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_shipping_method \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-shipping\-method"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+        \{% endif %\}
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_payment_method \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-payment\-method"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+        \<div class\="panel panel\-default"\>
+          \<div class\="panel\-heading"\>
+            \<h4 class\="panel\-title"\>\{\{ text_checkout_confirm \}\}\</h4\>
+          \</div\>
+          \<div class\="panel\-collapse collapse" id\="collapse\-checkout\-confirm"\>
+            \<div class\="panel\-body"\>\</div\>
+          \</div\>
+        \</div\>
+      \</div\>
+      \{\{ content_bottom \}\}\</div\>
+    \{\{ column_right \}\}\</div\>
+\</div\>
+\<script type\="text/javascript"\>\<\!\-\-
+\$\(document\)\.on\('change', 'input\[name\=\\'account\\'\]', function\(\) \{
+	if \(\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title \> \*'\)\.is\('a'\)\) \{
+		if \(this\.value \=\= 'register'\) \{
+			\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_account \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+		\} else \{
+			\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+		\}
+	\} else \{
+		if \(this\.value \=\= 'register'\) \{
+			\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_account \}\}'\);
+		\} else \{~]]></search>
+      <add><![CDATA[$1{{ header }}
+<div id="checkout-checkout" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h1>{{ heading_title }}</h1>
+
+      <div class="checkout-step">
+        <h3>{{ text_your_details }}</h3>
+        <div class="panel-body">
+          {% if not logged %}
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-firstname">{{ entry_firstname }}</label>
+            <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-payment-firstname" class="form-control" />
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-lastname">{{ entry_lastname }}</label>
+            <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-payment-lastname" class="form-control" />
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-email">{{ entry_email }}</label>
+            <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-payment-email" class="form-control" />
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-payment-telephone">{{ entry_telephone }}</label>
+            <input type="text" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-payment-telephone" class="form-control" />
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if shipping_required %}
+      <div class="checkout-step">
+        <div id="collapse-shipping-method">
+          <div class="panel-body"></div>
+        </div>
+      </div>
+
+      <div class="checkout-step">
+        <h3>Адреса доставки</h3>
+        <div class="panel-body">
+          <div class="form-group required">
+            <label class="control-label" for="input-shipping-city">{{ entry_city }}</label>
+            <div style="position:relative;">
+              <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-shipping-city" class="form-control" autocomplete="off" />
+              <input type="hidden" name="city_ref" id="input-shipping-city-ref" value="" />
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="control-label" for="input-shipping-address-1">{{ entry_address_1 }}</label>
+            <div style="position:relative;">
+              <input type="text" name="address_1" value="{{ address_1 }}" placeholder="{{ entry_address_1 }}" id="input-shipping-address-1" class="form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="checkout-step">
+        <div id="collapse-payment-method">
+          <div class="panel-body"></div>
+        </div>
+      </div>
+
+      <div class="checkout-step">
+        <div class="buttons">
+          <div class="pull-right">
+            <input type="button" value="Оформити замовлення" id="button-place-order" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg" />
+          </div>
+        </div>
+      </div>
+
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+</div>
+<script type="text/javascript"><!--
+// ecoplastics: single flat checkout form. Every field is visible on one
+// page (no accordion, no per-field auto-save) and a single "Place order"
+// button runs through the underlying OpenCart checkout steps in sequence
+// (contact/billing -> delivery address -> shipping method -> payment
+// method -> confirm/place order), stopping and showing an inline error
+// at whichever step rejects it.
+
+function ecoAlertError(container, message) {
+	$(container + ' .panel-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+}
+
+function ecoFieldErrors(prefix, errors) {
+	for (var i in errors) {
+		if (i === 'warning') continue;
+
+		var element = $('#input-' + prefix + '-' + i.replace(/_/g, '-'));
+
+		if (element.length) {
+			if (element.parent().hasClass('input-group')) {
+				element.parent().after('<div class="text-danger">' + errors[i] + '</div>');
+			} else {
+				element.after('<div class="text-danger">' + errors[i] + '</div>');
+			}
+			element.closest('.form-group').addClass('has-error');
+		}
+	}
+}
+
+function ecoClearErrors() {
+	$('.checkout-step .alert-dismissible, .checkout-step .text-danger').remove();
+	$('.checkout-step .form-group').removeClass('has-error');
+}
+
+function ecoLoad(container, url, callback) {
+	$.ajax({
+		url: url,
+		dataType: 'html',
+		success: function(html) {
+			$(container + ' .panel-body').html(html);
+			if (callback) callback();
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+// Sequenced (not parallel) for the same session-race reason as
+// ecoResyncMethods below.
+{% if shipping_required %}
+ecoLoad('#collapse-shipping-method', 'index.php?route=checkout/shipping_method', function() {
+	ecoLoad('#collapse-payment-method', 'index.php?route=checkout/payment_method');
+});
+{% else %}
+ecoLoad('#collapse-payment-method', 'index.php?route=checkout/payment_method');
+{% endif %}
+
+// Nova Poshta autocomplete on the static city/address fields, gated on
+// whichever shipping method is currently selected (tracked live, since
+// the fields never reload).
+var ecoShippingMethodCode = '{{ shipping_method_code }}';
+
+$(document).on('change', 'input[name=\'shipping_method\']', function() {
+	ecoShippingMethodCode = $(this).val();
+});
+
+(function() {
+	var cityInput = $('#input-shipping-city');
+	var cityRefInput = $('#input-shipping-city-ref');
+	var addressInput = $('#input-shipping-address-1');
+
+	if (!cityInput.length) {
+		return;
+	}
+
+	var cityList = $('<ul class="list-group" style="position:absolute;z-index:1000;max-height:220px;overflow-y:auto;width:100%;"></ul>').appendTo(cityInput.parent());
+	var addressList = $('<ul class="list-group" style="position:absolute;z-index:1000;max-height:220px;overflow-y:auto;width:100%;"></ul>').appendTo(addressInput.parent());
+	var cityTimer, addressTimer;
+
+	function npActive() {
+		return ecoShippingMethodCode === 'novaposhta.warehouse' || ecoShippingMethodCode === 'novaposhta.locker';
+	}
+
+	cityInput.on('input', function() {
+		cityRefInput.val('');
+		clearTimeout(cityTimer);
+
+		if (!npActive()) {
+			cityList.empty();
+			return;
+		}
+
+		var q = cityInput.val();
+		if (q.length < 2) { cityList.empty(); return; }
+		cityTimer = setTimeout(function() {
+			$.ajax({
+				url: 'index.php?route=extension/shipping/novaposhta/cities&q=' + encodeURIComponent(q),
+				dataType: 'json',
+				success: function(list) {
+					cityList.empty();
+					$.each(list, function(i, item) {
+						$('<a href="#" class="list-group-item"></a>').text(item.title).on('click', function(e) {
+							e.preventDefault();
+							cityInput.val(item.title);
+							cityRefInput.val(item.ref);
+							cityList.empty();
+							addressInput.val('');
+						}).appendTo(cityList);
+					});
+				}
+			});
+		}, 350);
+	});
+
+	addressInput.on('focus input', function() {
+		if (!npActive()) {
+			addressList.empty();
+			return;
+		}
+
+		var cityRef = cityRefInput.val();
+		if (!cityRef) { return; }
+		clearTimeout(addressTimer);
+		var q = addressInput.val();
+		var type = (ecoShippingMethodCode === 'novaposhta.locker') ? 'locker' : 'warehouse';
+		addressTimer = setTimeout(function() {
+			$.ajax({
+				url: 'index.php?route=extension/shipping/novaposhta/warehouses&city_ref=' + encodeURIComponent(cityRef) + '&type=' + type + '&q=' + encodeURIComponent(q),
+				dataType: 'json',
+				success: function(list) {
+					addressList.empty();
+					$.each(list, function(i, item) {
+						$('<a href="#" class="list-group-item"></a>').text(item.description).on('click', function(e) {
+							e.preventDefault();
+							addressInput.val(item.description);
+							addressList.empty();
+						}).appendTo(addressList);
+					});
+				}
+			});
+		}, 350);
+	});
+
+	$(document).on('click', function(e) {
+		if (!$(e.target).closest(cityInput.parent()).length) { cityList.empty(); }
+		if (!$(e.target).closest(addressInput.parent()).length) { addressList.empty(); }
+	});
+})();
+
+// Place order - runs the whole checkout sequence in one go.
+function ecoPlaceOrder() {
+	ecoClearErrors();
+	$('#button-place-order').button('loading');
+
+	var addressRoute = {% if logged %}'checkout/payment_address/save'{% else %}'checkout/guest/save'{% endif %};
+	var addressData = {
+		firstname: $('#input-payment-firstname').val() || '',
+		lastname: $('#input-payment-lastname').val() || '',
+		email: $('#input-payment-email').val() || '',
+		telephone: $('#input-payment-telephone').val() || '',
+		company: '',
+		address_1: 'Нова Пошта',
+		address_2: '',
+		city: 'Україна',
+		postcode: '',
+		country_id: '{{ country_id }}',
+		zone_id: '0',
+		shipping_address: '1'
+	};
+
+	$.ajax({
+		url: 'index.php?route=' + addressRoute,
+		type: 'post',
+		data: addressData,
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('.checkout-step', json['error']['warning']);
+				}
+				ecoFieldErrors('payment', json['error']);
+			} else {
+				ecoPlaceOrderShipping();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+// Saving the contact/address steps clears the cached shipping/payment
+// quotes server-side (address changed - standard OpenCart behaviour), so
+// they must be silently recomputed before reading/submitting whichever
+// method the user picked from the (now stale) rendered radio buttons.
+//
+// IMPORTANT: these two requests must run one after the other, never in
+// parallel. OpenCart's session storage (system/library/session/file.php)
+// reads the session file, releases its lock immediately, and only writes
+// the *entire* session array back at the very end of the request. Two
+// concurrent requests both read the same starting state and then each
+// overwrite the whole file with their own copy - whichever finishes last
+// wins, silently discarding the other's change. Running them in sequence
+// avoids the race entirely.
+function ecoResyncMethods(callback) {
+	function fail(xhr, ajaxOptions, thrownError) {
+		$('#button-place-order').button('reset');
+		alert(thrownError + "\r\n" + (xhr ? xhr.statusText : '') + "\r\n" + (xhr ? xhr.responseText : ''));
+	}
+
+	{% if shipping_required %}
+	$.ajax({ url: 'index.php?route=checkout/shipping_method', dataType: 'html' })
+		.done(function() {
+			$.ajax({ url: 'index.php?route=checkout/payment_method', dataType: 'html' })
+				.done(callback)
+				.fail(fail);
+		})
+		.fail(fail);
+	{% else %}
+	$.ajax({ url: 'index.php?route=checkout/payment_method', dataType: 'html' })
+		.done(callback)
+		.fail(fail);
+	{% endif %}
+}
+
+function ecoPlaceOrderShipping() {
+	{% if not shipping_required %}
+	ecoResyncMethods(ecoPlaceOrderMethod);
+	return;
+	{% endif %}
+
+	var shippingRoute = {% if logged %}'checkout/shipping_address/save'{% else %}'checkout/guest_shipping/save'{% endif %};
+	var shippingData = {
+		city: $('#input-shipping-city').val() || '',
+		address_1: $('#input-shipping-address-1').val() || '',
+		company: '',
+		address_2: '',
+		country_id: '{{ country_id }}',
+		zone_id: '0'
+	};
+
+	$.ajax({
+		url: 'index.php?route=' + shippingRoute,
+		type: 'post',
+		data: shippingData,
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('.checkout-step', json['error']['warning']);
+				}
+				ecoFieldErrors('shipping', json['error']);
+			} else {
+				ecoResyncMethods(ecoPlaceOrderMethod);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function ecoPlaceOrderMethod() {
+	{% if not shipping_required %}
+	ecoPlaceOrderPayment();
+	return;
+	{% endif %}
+
+	var method = $('#collapse-shipping-method input[name=\'shipping_method\']:checked').val();
+
+	if (!method) {
+		$('#button-place-order').button('reset');
+		ecoAlertError('#collapse-shipping-method', '{{ error_shipping }}');
+		return;
+	}
+
+	$.ajax({
+		url: 'index.php?route=checkout/shipping_method/save',
+		type: 'post',
+		data: { shipping_method: method },
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('#collapse-shipping-method', json['error']['warning']);
+				}
+			} else {
+				ecoPlaceOrderPayment();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function ecoPlaceOrderPayment() {
+	var paymentData = $('#collapse-payment-method input[type=\'radio\']:checked, #collapse-payment-method input[type=\'checkbox\']:checked, #collapse-payment-method textarea');
+
+	$.ajax({
+		url: 'index.php?route=checkout/payment_method/save',
+		type: 'post',
+		data: paymentData,
+		dataType: 'json',
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];
+			} else if (json['error']) {
+				$('#button-place-order').button('reset');
+				if (json['error']['warning']) {
+					ecoAlertError('#collapse-payment-method', json['error']['warning']);
+				}
+			} else {
+				ecoPlaceOrderConfirm();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function ecoPlaceOrderConfirm() {
+	$.ajax({
+		url: 'index.php?route=checkout/confirm',
+		dataType: 'html',
+		success: function(html) {
+			// checkout/confirm creates the order and returns the selected
+			// payment extension's own markup (cod.twig / free_checkout.twig),
+			// which self-binds a #button-confirm click handler that finishes
+			// the order and redirects to the success page. Run it off-screen
+			// and trigger that click automatically - one button click on this
+			// page is enough, no separate visible confirmation stage.
+			var hidden = $('<div style="display:none;"></div>').appendTo('body').html(html);
+
+			if ($('#button-confirm', hidden).length) {
+				$('#button-confirm').trigger('click');
+			} else {
+				// Unknown payment extension with no #button-confirm of its
+				// own - fall back to showing it so the order can still be
+				// completed manually.
+				$('#button-place-order').button('reset').hide();
+				hidden.removeAttr('style').insertAfter('#button-place-order');
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$('#button-place-order').button('reset');
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+$(document).delegate('#button-place-order', 'click', ecoPlaceOrder);
+//--></script>
+{{ footer }}
+]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_address \}\}'\);
+		\}
+	\}
+\}\);
+
+\{% if not logged %\}
+\$\(document\)\.ready\(function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/login',
+        dataType\: 'html',
+        success\: function\(html\) \{
+           \$\('\#collapse\-checkout\-option \.panel\-body'\)\.html\(html\);
+
+			\$\('\#collapse\-checkout\-option'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-checkout\-option" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_option \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+			\$\('a\[href\=\\'\#collapse\-checkout\-option\\'\]'\)\.trigger\('click'\);
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+\{% else %\}
+\$\(document\)\.ready\(function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/payment_address',
+        dataType\: 'html',
+        success\: function\(html\) \{
+            \$\('\#collapse\-payment\-address \.panel\-body'\)\.html\(html\);
+
+			\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+			\$\('a\[href\=\\'\#collapse\-payment\-address\\'\]'\)\.trigger\('click'\);
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+\{% endif %\}
+
+// Checkout
+\$\(document\)\.delegate\('\#button\-account', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/' \+ \$\('input\[name\=\\'account\\'\]\:checked'\)\.val\(\),
+        dataType\: 'html',
+        beforeSend\: function\(\) \{
+        	\$\('\#button\-account'\)\.button\('loading'\);
+		\},
+        complete\: function\(\) \{
+			\$\('\#button\-account'\)\.button\('reset'\);
+        \},
+        success\: function\(html\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+			\$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            \$\('\#collapse\-payment\-address \.panel\-body'\)\.html\(html\);
+
+			if \(\$\('input\[name\=\\'account\\'\]\:checked'\)\.val\(\) \=\= 'register'\) \{
+				\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_account \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+			\} else \{
+				\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+			\}
+
+			\$\('a\[href\=\\'\#collapse\-payment\-address\\'\]'\)\.trigger\('click'\);
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+// Login
+\$\(document\)\.delegate\('\#button\-login', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/login/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-checkout\-option \:input'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+        	\$\('\#button\-login'\)\.button\('loading'\);
+		\},
+        complete\: function\(\) \{
+            \$\('\#button\-login'\)\.button\('reset'\);
+        \},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+            \$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#collapse\-checkout\-option \.panel\-body'\)\.prepend\('\<div class\="alert alert\-danger alert\-dismissible"\>\<i class\="fa fa\-exclamation\-circle"\>\</i\> ' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+
+				// Highlight any found errors
+				\$\('input\[name\=\\'email\\'\]'\)\.parent\(\)\.addClass\('has\-error'\);
+				\$\('input\[name\=\\'password\\'\]'\)\.parent\(\)\.addClass\('has\-error'\);
+		   \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+// Register
+\$\(document\)\.delegate\('\#button\-register', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/register/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-payment\-address input\[type\=\\'text\\'\], \#collapse\-payment\-address input\[type\=\\'date\\'\], \#collapse\-payment\-address input\[type\=\\'datetime\-local\\'\], \#collapse\-payment\-address input\[type\=\\'time\\'\], \#collapse\-payment\-address input\[type\=\\'password\\'\], \#collapse\-payment\-address input\[type\=\\'hidden\\'\], \#collapse\-payment\-address input\[type\=\\'checkbox\\'\]\:checked, \#collapse\-payment\-address input\[type\=\\'radio\\'\]\:checked, \#collapse\-payment\-address textarea, \#collapse\-payment\-address select'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+			\$\('\#button\-register'\)\.button\('loading'\);
+		\},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+            \$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#button\-register'\)\.button\('reset'\);
+
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-payment\-address \.panel\-body'\)\.prepend\('\<div class\="alert alert\-danger alert\-dismissible"\>\<i class\="fa fa\-exclamation\-circle"\>\</i\> ' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+
+				for \(i in json\['error'\]\) \{
+					var element \= \$\('\#input\-payment\-' \+ i\.replace\('_', '\-'\)\);
+
+					if \(\$\(element\)\.parent\(\)\.hasClass\('input\-group'\)\) \{
+						\$\(element\)\.parent\(\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\} else \{
+						\$\(element\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\}
+				\}
+
+				// Highlight any found errors
+				\$\('\.text\-danger'\)\.parent\(\)\.addClass\('has\-error'\);
+            \} else \{
+                \{% if shipping_required %\}
+                var shipping_address \= \$\('\#payment\-address input\[name\=\\'shipping_address\\'\]\:checked'\)\.prop\('value'\);
+
+                if \(shipping_address\) \{
+                    \$\.ajax\(\{
+                        url\: 'index\.php\?route\=checkout/shipping_method',
+                        dataType\: 'html',
+                        success\: function\(html\) \{
+							// Add the shipping address
+                            \$\.ajax\(\{
+                                url\: 'index\.php\?route\=checkout/shipping_address',
+                                dataType\: 'html',
+                                success\: function\(html\) \{
+                                    \$\('\#collapse\-shipping\-address \.panel\-body'\)\.html\(html\);
+
+									\$\('\#collapse\-shipping\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+                                \},
+                                error\: function\(xhr, ajaxOptions, thrownError\) \{
+                                    alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                                \}
+                            \}\);
+
+							\$\('\#collapse\-shipping\-method \.panel\-body'\)\.html\(html\);
+
+							\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+   							\$\('a\[href\=\\'\#collapse\-shipping\-method\\'\]'\)\.trigger\('click'\);
+
+							\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_shipping_method \}\}'\);
+							\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+							\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                        \},
+                        error\: function\(xhr, ajaxOptions, thrownError\) \{
+                            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                        \}
+                    \}\);
+                \} else \{
+                    \$\.ajax\(\{
+                        url\: 'index\.php\?route\=checkout/shipping_address',
+                        dataType\: 'html',
+                        success\: function\(html\) \{
+                            \$\('\#collapse\-shipping\-address \.panel\-body'\)\.html\(html\);
+
+							\$\('\#collapse\-shipping\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+							\$\('a\[href\=\\'\#collapse\-shipping\-address\\'\]'\)\.trigger\('click'\);
+
+							\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_shipping_method \}\}'\);
+							\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+							\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                        \},
+                        error\: function\(xhr, ajaxOptions, thrownError\) \{
+                            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                        \}
+                    \}\);
+                \}
+                \{% else %\}
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/payment_method',~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)dataType\: 'html',
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-payment\-method \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-payment\-method\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\);
+                \{% endif %\}
+
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/payment_address',
+                    dataType\: 'html',
+                    complete\: function\(\) \{
+                        \$\('\#button\-register'\)\.button\('reset'\);
+                    \},
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-payment\-address \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-payment\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\);
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+// Payment Address
+\$\(document\)\.delegate\('\#button\-payment\-address', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/payment_address/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-payment\-address input\[type\=\\'text\\'\], \#collapse\-payment\-address input\[type\=\\'date\\'\], \#collapse\-payment\-address input\[type\=\\'datetime\-local\\'\], \#collapse\-payment\-address input\[type\=\\'time\\'\], \#collapse\-payment\-address input\[type\=\\'password\\'\], \#collapse\-payment\-address input\[type\=\\'checkbox\\'\]\:checked, \#collapse\-payment\-address input\[type\=\\'radio\\'\]\:checked, \#collapse\-payment\-address input\[type\=\\'hidden\\'\], \#collapse\-payment\-address textarea, \#collapse\-payment\-address select'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+        	\$\('\#button\-payment\-address'\)\.button\('loading'\);
+		\},
+        complete\: function\(\) \{
+			\$\('\#button\-payment\-address'\)\.button\('reset'\);
+        \},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+			\$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-payment\-address \.panel\-body'\)\.prepend\('\<div class\="alert alert\-warning alert\-dismissible"\>' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+
+				for \(i in json\['error'\]\) \{
+					var element \= \$\('\#input\-payment\-' \+ i\.replace\('_', '\-'\)\);
+
+					if \(\$\(element\)\.parent\(\)\.hasClass\('input\-group'\)\) \{
+						\$\(element\)\.parent\(\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\} else \{
+						\$\(element\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\}
+				\}
+
+				// Highlight any found errors
+				\$\('\.text\-danger'\)\.parent\(\)\.parent\(\)\.addClass\('has\-error'\);
+            \} else \{
+                \{% if shipping_required %\}
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/shipping_address',
+                    dataType\: 'html',
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-shipping\-address \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-shipping\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-shipping\-address\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_shipping_method \}\}'\);
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\)\.done\(function\(\) \{
+					\$\.ajax\(\{
+						url\: 'index\.php\?route\=checkout/payment_address',
+						dataType\: 'html',
+						success\: function\(html\) \{
+							\$\('\#collapse\-payment\-address \.panel\-body'\)\.html\(html\);~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\},
+						error\: function\(xhr, ajaxOptions, thrownError\) \{
+							alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+						\}
+					\}\);
+				\}\);
+                \{% else %\}
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/payment_method',
+                    dataType\: 'html',
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-payment\-method \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-payment\-method\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\)\.done\(function\(\) \{
+					\$\.ajax\(\{
+						url\: 'index\.php\?route\=checkout/payment_address',
+						dataType\: 'html',
+						success\: function\(html\) \{
+							\$\('\#collapse\-payment\-address \.panel\-body'\)\.html\(html\);
+						\},
+						error\: function\(xhr, ajaxOptions, thrownError\) \{
+							alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+						\}
+					\}\);				
+				\}\);
+                \{% endif %\}
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+// Shipping Address
+\$\(document\)\.delegate\('\#button\-shipping\-address', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/shipping_address/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-shipping\-address input\[type\=\\'text\\'\], \#collapse\-shipping\-address input\[type\=\\'date\\'\], \#collapse\-shipping\-address input\[type\=\\'datetime\-local\\'\], \#collapse\-shipping\-address input\[type\=\\'time\\'\], \#collapse\-shipping\-address input\[type\=\\'password\\'\], \#collapse\-shipping\-address input\[type\=\\'checkbox\\'\]\:checked, \#collapse\-shipping\-address input\[type\=\\'radio\\'\]\:checked, \#collapse\-shipping\-address textarea, \#collapse\-shipping\-address select'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+			\$\('\#button\-shipping\-address'\)\.button\('loading'\);
+	    \},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+			\$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#button\-shipping\-address'\)\.button\('reset'\);
+
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-shipping\-address \.panel\-body'\)\.prepend\('\<div class\="alert alert\-warning alert\-dismissible"\>' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+
+				for \(i in json\['error'\]\) \{
+					var element \= \$\('\#input\-shipping\-' \+ i\.replace\('_', '\-'\)\);
+
+					if \(\$\(element\)\.parent\(\)\.hasClass\('input\-group'\)\) \{
+						\$\(element\)\.parent\(\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\} else \{
+						\$\(element\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\}
+				\}
+
+				// Highlight any found errors
+				\$\('\.text\-danger'\)\.parent\(\)\.parent\(\)\.addClass\('has\-error'\);
+            \} else \{
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/shipping_method',
+                    dataType\: 'html',
+                    complete\: function\(\) \{
+                        \$\('\#button\-shipping\-address'\)\.button\('reset'\);
+                    \},
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-shipping\-method \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-shipping\-method\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+						
+                        \$\.ajax\(\{
+                            url\: 'index\.php\?route\=checkout/shipping_address',
+                            dataType\: 'html',
+                            success\: function\(html\) \{
+                                \$\('\#collapse\-shipping\-address \.panel\-body'\)\.html\(html\);~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\},
+                            error\: function\(xhr, ajaxOptions, thrownError\) \{
+                                alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                            \}
+                        \}\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\)\.done\(function\(\) \{
+					\$\.ajax\(\{
+						url\: 'index\.php\?route\=checkout/payment_address',
+						dataType\: 'html',
+						success\: function\(html\) \{
+							\$\('\#collapse\-payment\-address \.panel\-body'\)\.html\(html\);
+						\},
+						error\: function\(xhr, ajaxOptions, thrownError\) \{
+							alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+						\}
+					\}\);
+				\}\);
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+// Guest
+\$\(document\)\.delegate\('\#button\-guest', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/guest/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-payment\-address input\[type\=\\'text\\'\], \#collapse\-payment\-address input\[type\=\\'date\\'\], \#collapse\-payment\-address input\[type\=\\'datetime\-local\\'\], \#collapse\-payment\-address input\[type\=\\'time\\'\], \#collapse\-payment\-address input\[type\=\\'checkbox\\'\]\:checked, \#collapse\-payment\-address input\[type\=\\'radio\\'\]\:checked, \#collapse\-payment\-address input\[type\=\\'hidden\\'\], \#collapse\-payment\-address textarea, \#collapse\-payment\-address select'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+       		\$\('\#button\-guest'\)\.button\('loading'\);
+	    \},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+			\$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#button\-guest'\)\.button\('reset'\);
+
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-payment\-address \.panel\-body'\)\.prepend\('\<div class\="alert alert\-warning alert\-dismissible"\>' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+
+				for \(i in json\['error'\]\) \{
+					var element \= \$\('\#input\-payment\-' \+ i\.replace\('_', '\-'\)\);
+
+					if \(\$\(element\)\.parent\(\)\.hasClass\('input\-group'\)\) \{
+						\$\(element\)\.parent\(\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\} else \{
+						\$\(element\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\}
+				\}
+
+				// Highlight any found errors
+				\$\('\.text\-danger'\)\.parent\(\)\.addClass\('has\-error'\);
+            \} else \{
+                \{% if shipping_required %\}
+                var shipping_address \= \$\('\#collapse\-payment\-address input\[name\=\\'shipping_address\\'\]\:checked'\)\.prop\('value'\);
+
+                if \(shipping_address\) \{
+                    \$\.ajax\(\{
+                        url\: 'index\.php\?route\=checkout/shipping_method',
+                        dataType\: 'html',
+                        complete\: function\(\) \{
+                            \$\('\#button\-guest'\)\.button\('reset'\);
+                        \},
+                        success\: function\(html\) \{
+							// Add the shipping address
+                            \$\.ajax\(\{
+                                url\: 'index\.php\?route\=checkout/guest_shipping',
+                                dataType\: 'html',
+                                success\: function\(html\) \{
+                                    \$\('\#collapse\-shipping\-address \.panel\-body'\)\.html\(html\);
+
+									\$\('\#collapse\-shipping\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+                                \},
+                                error\: function\(xhr, ajaxOptions, thrownError\) \{
+                                    alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                                \}
+                            \}\);
+
+						    \$\('\#collapse\-shipping\-method \.panel\-body'\)\.html\(html\);
+
+							\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+							\$\('a\[href\=\\'\#collapse\-shipping\-method\\'\]'\)\.trigger\('click'\);
+
+							\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+							\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                        \},
+                        error\: function\(xhr, ajaxOptions, thrownError\) \{~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                        \}
+                    \}\);
+                \} else \{
+                    \$\.ajax\(\{
+                        url\: 'index\.php\?route\=checkout/guest_shipping',
+                        dataType\: 'html',
+                        complete\: function\(\) \{
+                            \$\('\#button\-guest'\)\.button\('reset'\);
+                        \},
+                        success\: function\(html\) \{
+                            \$\('\#collapse\-shipping\-address \.panel\-body'\)\.html\(html\);
+
+							\$\('\#collapse\-shipping\-address'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-address" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_address \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+							\$\('a\[href\=\\'\#collapse\-shipping\-address\\'\]'\)\.trigger\('click'\);
+
+							\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_shipping_method \}\}'\);
+							\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+							\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                        \},
+                        error\: function\(xhr, ajaxOptions, thrownError\) \{
+                            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                        \}
+                    \}\);
+                \}
+                \{% else %\}
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/payment_method',
+                    dataType\: 'html',
+                    complete\: function\(\) \{
+                        \$\('\#button\-guest'\)\.button\('reset'\);
+                    \},
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-payment\-method \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-payment\-method\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\);
+                \{% endif %\}
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+// Guest Shipping
+\$\(document\)\.delegate\('\#button\-guest\-shipping', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/guest_shipping/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-shipping\-address input\[type\=\\'text\\'\], \#collapse\-shipping\-address input\[type\=\\'date\\'\], \#collapse\-shipping\-address input\[type\=\\'datetime\-local\\'\], \#collapse\-shipping\-address input\[type\=\\'time\\'\], \#collapse\-shipping\-address input\[type\=\\'password\\'\], \#collapse\-shipping\-address input\[type\=\\'checkbox\\'\]\:checked, \#collapse\-shipping\-address input\[type\=\\'radio\\'\]\:checked, \#collapse\-shipping\-address textarea, \#collapse\-shipping\-address select'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+        	\$\('\#button\-guest\-shipping'\)\.button\('loading'\);
+		\},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+			\$\('\.form\-group'\)\.removeClass\('has\-error'\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#button\-guest\-shipping'\)\.button\('reset'\);
+
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-shipping\-address \.panel\-body'\)\.prepend\('\<div class\="alert alert\-danger alert\-dismissible"\>' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+
+				for \(i in json\['error'\]\) \{
+					var element \= \$\('\#input\-shipping\-' \+ i\.replace\('_', '\-'\)\);
+
+					if \(\$\(element\)\.parent\(\)\.hasClass\('input\-group'\)\) \{
+						\$\(element\)\.parent\(\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\} else \{
+						\$\(element\)\.after\('\<div class\="text\-danger"\>' \+ json\['error'\]\[i\] \+ '\</div\>'\);
+					\}
+				\}
+
+				// Highlight any found errors
+				\$\('\.text\-danger'\)\.parent\(\)\.addClass\('has\-error'\);
+            \} else \{
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/shipping_method',
+                    dataType\: 'html',
+                    complete\: function\(\) \{
+                        \$\('\#button\-guest\-shipping'\)\.button\('reset'\);
+                    \},
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-shipping\-method \.panel\-body'\)\.html\(html\);
+~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\$\('\#collapse\-shipping\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-shipping\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_shipping_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-shipping\-method\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_payment_method \}\}'\);
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\);
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+\$\(document\)\.delegate\('\#button\-shipping\-method', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/shipping_method/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-shipping\-method input\[type\=\\'radio\\'\]\:checked, \#collapse\-shipping\-method textarea'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+        	\$\('\#button\-shipping\-method'\)\.button\('loading'\);
+		\},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#button\-shipping\-method'\)\.button\('reset'\);
+
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-shipping\-method \.panel\-body'\)\.prepend\('\<div class\="alert alert\-danger alert\-dismissible"\>' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+            \} else \{
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/payment_method',
+                    dataType\: 'html',
+                    complete\: function\(\) \{
+                        \$\('\#button\-shipping\-method'\)\.button\('reset'\);
+                    \},
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-payment\-method \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-payment\-method'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-payment\-method" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_payment_method \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-payment\-method\\'\]'\)\.trigger\('click'\);
+
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\{\{ text_checkout_confirm \}\}'\);
+                    \},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\);
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+
+\$\(document\)\.delegate\('\#button\-payment\-method', 'click', function\(\) \{
+    \$\.ajax\(\{
+        url\: 'index\.php\?route\=checkout/payment_method/save',
+        type\: 'post',
+        data\: \$\('\#collapse\-payment\-method input\[type\=\\'radio\\'\]\:checked, \#collapse\-payment\-method input\[type\=\\'checkbox\\'\]\:checked, \#collapse\-payment\-method textarea'\),
+        dataType\: 'json',
+        beforeSend\: function\(\) \{
+         	\$\('\#button\-payment\-method'\)\.button\('loading'\);
+		\},
+        success\: function\(json\) \{
+            \$\('\.alert\-dismissible, \.text\-danger'\)\.remove\(\);
+
+            if \(json\['redirect'\]\) \{
+                location \= json\['redirect'\];
+            \} else if \(json\['error'\]\) \{
+                \$\('\#button\-payment\-method'\)\.button\('reset'\);
+                
+                if \(json\['error'\]\['warning'\]\) \{
+                    \$\('\#collapse\-payment\-method \.panel\-body'\)\.prepend\('\<div class\="alert alert\-danger alert\-dismissible"\>' \+ json\['error'\]\['warning'\] \+ '\<button type\="button" class\="close" data\-dismiss\="alert"\>&times;\</button\>\</div\>'\);
+                \}
+            \} else \{
+                \$\.ajax\(\{
+                    url\: 'index\.php\?route\=checkout/confirm',
+                    dataType\: 'html',
+                    complete\: function\(\) \{
+                        \$\('\#button\-payment\-method'\)\.button\('reset'\);
+                    \},
+                    success\: function\(html\) \{
+                        \$\('\#collapse\-checkout\-confirm \.panel\-body'\)\.html\(html\);
+
+						\$\('\#collapse\-checkout\-confirm'\)\.parent\(\)\.find\('\.panel\-heading \.panel\-title'\)\.html\('\<a href\="\#collapse\-checkout\-confirm" data\-toggle\="collapse" data\-parent\="\#accordion" class\="accordion\-toggle"\>\{\{ text_checkout_confirm \}\} \<i class\="fa fa\-caret\-down"\>\</i\>\</a\>'\);
+
+						\$\('a\[href\=\\'\#collapse\-checkout\-confirm\\'\]'\)\.trigger\('click'\);~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\},
+                    error\: function\(xhr, ajaxOptions, thrownError\) \{
+                        alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+                    \}
+                \}\);
+            \}
+        \},
+        error\: function\(xhr, ajaxOptions, thrownError\) \{
+            alert\(thrownError \+ "\\r\\n" \+ xhr\.statusText \+ "\\r\\n" \+ xhr\.responseText\);
+        \}
+    \}\);
+\}\);
+//\-\-\>\</script\>
+\{\{ footer \}\}~]]></search>
+      <add><![CDATA[$1]]></add>
+    </operation>
+  </file>
+  <file path="catalog/view/theme/default/template/checkout/shipping_method.twig">
+    <operation>
+      <search regex="true"><![CDATA[~\<p\>\<strong\>\{\{ text_comments \}\}\</strong\>\</p\>
+\<p\>
+  \<textarea name\="comment" rows\="8" class\="form\-control"\>\{\{ comment \}\}\</textarea\>
+\</p\>
+\<div class\="buttons"\>
+  \<div class\="pull\-right"\>
+    \<input type\="button" value\="\{\{ button_continue \}\}" id\="button\-shipping\-method" data\-loading\-text\="\{\{ text_loading \}\}" class\="btn btn\-primary" /\>
+  \</div\>
+\</div\>~]]></search>
+      <add><![CDATA[]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/checkout/checkout.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCheckoutCheckout extends Controller \{
+	public function index\(\) \{
+		// Validate cart has products and has stock\.
+		if \(\(\!\$this\-\>cart\-\>hasProducts\(\) && empty\(\$this\-\>session\-\>data\['vouchers'\]\)\) \|\| \(\!\$this\-\>cart\-\>hasStock\(\) && \!\$this\-\>config\-\>get\('config_stock_checkout'\)\)\) \{
+			\$this\-\>response\-\>redirect\(\$this\-\>url\-\>link\('checkout/cart'\)\);
+		\}
+
+		// Validate minimum quantity requirements\.
+		\$products \= \$this\-\>cart\-\>getProducts\(\);
+
+		foreach \(\$products as \$product\) \{
+			\$product_total \= 0;
+
+			foreach \(\$products as \$product_2\) \{
+				if \(\$product_2\['product_id'\] \=\= \$product\['product_id'\]\) \{
+					\$product_total \+\= \$product_2\['quantity'\];
+				\}
+			\}
+
+			if \(\$product\['minimum'\] \> \$product_total\) \{
+				\$this\-\>response\-\>redirect\(\$this\-\>url\-\>link\('checkout/cart'\)\);
+			\}
+		\}
+
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		\$this\-\>document\-\>setTitle\(\$this\-\>language\-\>get\('heading_title'\)\);
+		\$this\-\>document\-\>setRobots\('noindex,follow'\);
+
+		\$this\-\>document\-\>addScript\('catalog/view/javascript/jquery/datetimepicker/moment/moment\.min\.js'\);
+		\$this\-\>document\-\>addScript\('catalog/view/javascript/jquery/datetimepicker/moment/moment\-with\-locales\.min\.js'\);
+		\$this\-\>document\-\>addScript\('catalog/view/javascript/jquery/datetimepicker/bootstrap\-datetimepicker\.min\.js'\);
+		\$this\-\>document\-\>addStyle\('catalog/view/javascript/jquery/datetimepicker/bootstrap\-datetimepicker\.min\.css'\);
+
+		// Required by klarna
+		if \(\$this\-\>config\-\>get\('payment_klarna_account'\) \|\| \$this\-\>config\-\>get\('payment_klarna_invoice'\)\) \{
+			\$this\-\>document\-\>addScript\('http\://cdn\.klarna\.com/public/kitt/toc/v1\.0/js/klarna\.terms\.min\.js'\);
+		\}
+
+		\$data\['breadcrumbs'\] \= array\(\);
+
+		\$data\['breadcrumbs'\]\[\] \= array\(
+			'text' \=\> \$this\-\>language\-\>get\('text_home'\),
+			'href' \=\> \$this\-\>url\-\>link\('common/home'\)
+		\);
+
+		\$data\['breadcrumbs'\]\[\] \= array\(
+			'text' \=\> \$this\-\>language\-\>get\('text_cart'\),
+			'href' \=\> \$this\-\>url\-\>link\('checkout/cart'\)
+		\);
+
+		\$data\['breadcrumbs'\]\[\] \= array\(
+			'text' \=\> \$this\-\>language\-\>get\('heading_title'\),
+			'href' \=\> \$this\-\>url\-\>link\('checkout/checkout', '', true\)
+		\);
+
+		\$data\['text_checkout_option'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_option'\), 1\);
+		\$data\['text_checkout_account'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_account'\), 2\);
+		\$data\['text_checkout_payment_address'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_payment_address'\), 2\);
+		\$data\['text_checkout_shipping_address'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_shipping_address'\), 3\);
+		\$data\['text_checkout_shipping_method'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_shipping_method'\), 4\);
+		
+		if \(\$this\-\>cart\-\>hasShipping\(\)\) \{
+			\$data\['text_checkout_payment_method'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_payment_method'\), 5\);
+			\$data\['text_checkout_confirm'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_confirm'\), 6\);
+		\} else \{
+			\$data\['text_checkout_payment_method'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_payment_method'\), 3\);
+			\$data\['text_checkout_confirm'\] \= sprintf\(\$this\-\>language\-\>get\('text_checkout_confirm'\), 4\);	
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['error'\]\)\) \{
+			\$data\['error_warning'\] \= \$this\-\>session\-\>data\['error'\];
+			unset\(\$this\-\>session\-\>data\['error'\]\);
+		\} else \{
+			\$data\['error_warning'\] \= '';
+		\}
+
+		\$data\['logged'\] \= \$this\-\>customer\-\>isLogged\(\);
+
+		if \(isset\(\$this\-\>session\-\>data\['account'\]\)\) \{
+			\$data\['account'\] \= \$this\-\>session\-\>data\['account'\];
+		\} else \{
+			\$data\['account'\] \= '';
+		\}
+
+		\$data\['shipping_required'\] \= \$this\-\>cart\-\>hasShipping\(\);
+
+		\$data\['column_left'\] \= \$this\-\>load\-\>controller\('common/column_left'\);
+		\$data\['column_right'\] \= \$this\-\>load\-\>controller\('common/column_right'\);
+		\$data\['content_top'\] \= \$this\-\>load\-\>controller\('common/content_top'\);
+		\$data\['content_bottom'\] \= \$this\-\>load\-\>controller\('common/content_bottom'\);
+		\$data\['footer'\] \= \$this\-\>load\-\>controller\('common/footer'\);
+		\$data\['header'\] \= \$this\-\>load\-\>controller\('common/header'\);
+
+		\$this\-\>response\-\>setOutput\(\$this\-\>load\-\>view\('checkout/checkout', \$data\)\);
+	\}
+
+	public function country\(\) \{
+		\$json \= array\(\);
+
+		\$this\-\>load\-\>model\('localisation/country'\);
+
+		\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>get\['country_id'\]\);
+
+		if \(\$country_info\) \{
+			\$this\-\>load\-\>model\('localisation/zone'\);
+
+			\$json \= array\(
+				'country_id'        \=\> \$country_info\['country_id'\],
+				'name'              \=\> \$country_info\['name'\],
+				'iso_code_2'        \=\> \$country_info\['iso_code_2'\],
+				'iso_code_3'        \=\> \$country_info\['iso_code_3'\],
+				'address_format'    \=\> \$country_info\['address_format'\],
+				'postcode_required' \=\> \$country_info\['postcode_required'\],
+				'zone'              \=\> \$this\-\>model_localisation_zone\-\>getZonesByCountryId\(\$this\-\>request\-\>get\['country_id'\]\),
+				'status'            \=\> \$country_info\['status'\]
+			\);
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}
+
+	public function customfield\(\) \{
+		\$json \= array\(\);
+
+		\$this\-\>load\-\>model\('account/custom_field'\);
+
+		// Customer Group
+		if \(isset\(\$this\-\>request\-\>get\['customer_group_id'\]\) && is_array\(\$this\-\>config\-\>get\('config_customer_group_display'\)\) && in_array\(\$this\-\>request\-\>get\['customer_group_id'\], \$this\-\>config\-\>get\('config_customer_group_display'\)\)\) \{
+			\$customer_group_id \= \$this\-\>request\-\>get\['customer_group_id'\];
+		\} else \{
+			\$customer_group_id \= \$this\-\>config\-\>get\('config_customer_group_id'\);
+		\}
+
+		\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$customer_group_id\);
+
+		foreach \(\$custom_fields as \$custom_field\) \{
+			\$json\[\] \= array\(
+				'custom_field_id' \=\> \$custom_field\['custom_field_id'\],
+				'required'        \=\> \$custom_field\['required'\]
+			\);
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}
+\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCheckoutCheckout extends Controller {
+	public function index() {
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$this->response->redirect($this->url->link('checkout/cart'));
+		}
+
+		// Validate minimum quantity requirements.
+		$products = $this->cart->getProducts();
+
+		foreach ($products as $product) {
+			$product_total = 0;
+
+			foreach ($products as $product_2) {
+				if ($product_2['product_id'] == $product['product_id']) {
+					$product_total += $product_2['quantity'];
+				}
+			}
+
+			if ($product['minimum'] > $product_total) {
+				$this->response->redirect($this->url->link('checkout/cart'));
+			}
+		}
+
+		$this->load->language('checkout/checkout');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->setRobots('noindex,follow');
+
+		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
+		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
+		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
+		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
+
+		// Required by klarna
+		if ($this->config->get('payment_klarna_account') || $this->config->get('payment_klarna_invoice')) {
+			$this->document->addScript('http://cdn.klarna.com/public/kitt/toc/v1.0/js/klarna.terms.min.js');
+		}
+
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/home')
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_cart'),
+			'href' => $this->url->link('checkout/cart')
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('heading_title'),
+			'href' => $this->url->link('checkout/checkout', '', true)
+		);
+
+		if (isset($this->session->data['error'])) {
+			$data['error_warning'] = $this->session->data['error'];
+			unset($this->session->data['error']);
+		} else {
+			$data['error_warning'] = '';
+		}
+
+		$data['logged'] = $this->customer->isLogged();
+
+		$data['shipping_required'] = $this->cart->hasShipping();
+
+		// Nova Poshta delivery does not need a full billing address to compute
+		// shipping/payment quotes - seed a minimal stub the first time this
+		// page loads so the shipping/payment method panels show real options
+		// immediately, without waiting on any prior save.
+		if (!isset($this->session->data['shipping_address'])) {
+			$this->session->data['shipping_address'] = array(
+				'country_id' => $this->config->get('config_country_id'),
+				'zone_id'    => 0
+			);
+		}
+
+		if (!isset($this->session->data['payment_address'])) {
+			$this->session->data['payment_address'] = array(
+				'country_id' => $this->config->get('config_country_id'),
+				'zone_id'    => 0
+			);
+		}
+
+		// Contact fields (guest checkout only - logged-in customers already
+		// have this information on their account).
+		if (isset($this->session->data['guest']['firstname'])) {
+			$data['firstname'] = $this->session->data['guest']['firstname'];
+		} else {
+			$data['firstname'] = '';
+		}
+
+		if (isset($this->session->data['guest']['lastname'])) {
+			$data['lastname'] = $this->session->data['guest']['lastname'];
+		} else {
+			$data['lastname'] = '';
+		}
+
+		if (isset($this->session->data['guest']['email'])) {
+			$data['email'] = $this->session->data['guest']['email'];
+		} else {
+			$data['email'] = '';
+		}
+
+		if (isset($this->session->data['guest']['telephone'])) {
+			$data['telephone'] = $this->session->data['guest']['telephone'];
+		} else {
+			$data['telephone'] = '';
+		}
+
+		// Delivery address fields (city / branch - the actual Nova Poshta
+		// destination). Placeholders used elsewhere for the billing address
+		// ('Нова Пошта' / 'Україна') are never shown here.
+		$skip = array('Україна', 'Нова Пошта');
+
+		$session_city = isset($this->session->data['shipping_address']['city']) ? $this->session->data['shipping_address']['city'] : '';
+		$data['city'] = (!in_array($session_city, $skip)) ? $session_city : '';
+
+		$session_address_1 = isset($this->session->data['shipping_address']['address_1']) ? $this->session->data['shipping_address']['address_1'] : '';
+		$data['address_1'] = (!in_array($session_address_1, $skip)) ? $session_address_1 : '';
+
+		$data['country_id'] = $this->session->data['shipping_address']['country_id'];
+
+		$data['shipping_method_code'] = isset($this->session->data['shipping_method']['code'])
+			? $this->session->data['shipping_method']['code'] : '';
+
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['column_right'] = $this->load->controller('common/column_right');
+		$data['content_top'] = $this->load->controller('common/content_top');
+		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header');
+
+		$this->response->setOutput($this->load->view('checkout/checkout', $data));
+	}
+
+	public function country() {
+		$json = array();
+
+		$this->load->model('localisation/country');
+
+		$country_info = $this->model_localisation_country->getCountry($this->request->get['country_id']);
+
+		if ($country_info) {
+			$this->load->model('localisation/zone');
+
+			$json = array(
+				'country_id'        => $country_info['country_id'],
+				'name'              => $country_info['name'],
+				'iso_code_2'        => $country_info['iso_code_2'],
+				'iso_code_3'        => $country_info['iso_code_3'],
+				'address_format'    => $country_info['address_format'],
+				'postcode_required' => $country_info['postcode_required'],
+				'zone'              => $this->model_localisation_zone->getZonesByCountryId($this->request->get['country_id']),
+				'status'            => $country_info['status']
+			);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function customfield() {
+		$json = array();
+
+		$this->load->model('account/custom_field');
+
+		// Customer Group
+		if (isset($this->request->get['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->get['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+			$customer_group_id = $this->request->get['customer_group_id'];
+		} else {
+			$customer_group_id = $this->config->get('config_customer_group_id');
+		}
+
+		$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
+
+		foreach ($custom_fields as $custom_field) {
+			$json[] = array(
+				'custom_field_id' => $custom_field['custom_field_id'],
+				'required'        => $custom_field['required']
+			);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/view/theme/default/template/checkout/payment_method.twig">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<div class\="buttons"\>
+  \<div class\="pull\-right"\>\{\{ text_agree \}\}
+    \{% if agree %\}
+    \<input type\="checkbox" name\="agree" value\="1" checked\="checked" /\>
+    \{% else %\}
+    \<input type\="checkbox" name\="agree" value\="1" /\>
+    \{% endif %\}
+    &nbsp;
+    \<input type\="button" value\="\{\{ button_continue \}\}" id\="button\-payment\-method" data\-loading\-text\="\{\{ text_loading \}\}" class\="btn btn\-primary" /\>
+  \</div\>
+\</div\>
+\{% else %\}
+\<div class\="buttons"\>
+  \<div class\="pull\-right"\>
+    \<input type\="button" value\="\{\{ button_continue \}\}" id\="button\-payment\-method" data\-loading\-text\="\{\{ text_loading \}\}" class\="btn btn\-primary" /\>
+  \</div\>
+\</div\>
+\{% endif %\} ~]]></search>
+      <add><![CDATA[$1<div class="checkbox">
+  <label>
+    {% if agree %}
+    <input type="checkbox" name="agree" value="1" checked="checked" />
+    {% else %}
+    <input type="checkbox" name="agree" value="1" />
+    {% endif %}
+    {{ text_agree }}
+  </label>
+</div>
+{% endif %}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/checkout/shipping_method.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCheckoutShippingMethod extends Controller \{
+	public function index\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\)\) \{
+			// Shipping Methods
+			\$method_data \= array\(\);
+
+			\$this\-\>load\-\>model\('setting/extension'\);
+
+			\$results \= \$this\-\>model_setting_extension\-\>getExtensions\('shipping'\);
+
+			foreach \(\$results as \$result\) \{
+				if \(\$this\-\>config\-\>get\('shipping_' \. \$result\['code'\] \. '_status'\)\) \{
+					\$this\-\>load\-\>model\('extension/shipping/' \. \$result\['code'\]\);
+
+					\$quote \= \$this\-\>\{'model_extension_shipping_' \. \$result\['code'\]\}\-\>getQuote\(\$this\-\>session\-\>data\['shipping_address'\]\);
+
+					if \(\$quote\) \{
+						\$method_data\[\$result\['code'\]\] \= array\(
+							'title'      \=\> \$quote\['title'\],
+							'quote'      \=\> \$quote\['quote'\],
+							'sort_order' \=\> \$quote\['sort_order'\],
+							'error'      \=\> \$quote\['error'\]
+						\);
+					\}
+				\}
+			\}
+
+			\$sort_order \= array\(\);
+
+			foreach \(\$method_data as \$key \=\> \$value\) \{
+				\$sort_order\[\$key\] \= \$value\['sort_order'\];
+			\}
+
+			array_multisort\(\$sort_order, SORT_ASC, \$method_data\);
+
+			\$this\-\>session\-\>data\['shipping_methods'\] \= \$method_data;
+		\}
+
+		if \(empty\(\$this\-\>session\-\>data\['shipping_methods'\]\)\) \{
+			\$data\['error_warning'\] \= sprintf\(\$this\-\>language\-\>get\('error_no_shipping'\), \$this\-\>url\-\>link\('information/contact'\)\);
+		\} else \{
+			\$data\['error_warning'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_methods'\]\)\) \{
+			\$data\['shipping_methods'\] \= \$this\-\>session\-\>data\['shipping_methods'\];
+		\} else \{
+			\$data\['shipping_methods'\] \= array\(\);
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_method'\]\['code'\]\)\) \{
+			\$data\['code'\] \= \$this\-\>session\-\>data\['shipping_method'\]\['code'\];
+		\} else \{
+			\$data\['code'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['comment'\]\)\) \{
+			\$data\['comment'\] \= \$this\-\>session\-\>data\['comment'\];
+		\} else \{
+			\$data\['comment'\] \= '';
+		\}
+		
+		\$this\-\>response\-\>setOutput\(\$this\-\>load\-\>view\('checkout/shipping_method', \$data\)\);
+	\}
+
+	public function save\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		\$json \= array\(\);
+
+		// Validate if shipping is required\. If not the customer should not have reached this page\.
+		if \(\!\$this\-\>cart\-\>hasShipping\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate if shipping address has been set\.
+		if \(\!isset\(\$this\-\>session\-\>data\['shipping_address'\]\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate cart has products and has stock\.
+		if \(\(\!\$this\-\>cart\-\>hasProducts\(\) && empty\(\$this\-\>session\-\>data\['vouchers'\]\)\) \|\| \(\!\$this\-\>cart\-\>hasStock\(\) && \!\$this\-\>config\-\>get\('config_stock_checkout'\)\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+		\}
+
+		// Validate minimum quantity requirements\.
+		\$products \= \$this\-\>cart\-\>getProducts\(\);
+
+		foreach \(\$products as \$product\) \{
+			\$product_total \= 0;
+
+			foreach \(\$products as \$product_2\) \{
+				if \(\$product_2\['product_id'\] \=\= \$product\['product_id'\]\) \{
+					\$product_total \+\= \$product_2\['quantity'\];
+				\}
+			\}
+
+			if \(\$product\['minimum'\] \> \$product_total\) \{
+				\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+
+				break;
+			\}
+		\}
+
+		if \(\!isset\(\$this\-\>request\-\>post\['shipping_method'\]\)\) \{
+			\$json\['error'\]\['warning'\] \= \$this\-\>language\-\>get\('error_shipping'\);
+		\} else \{
+			\$shipping \= explode\('\.', \$this\-\>request\-\>post\['shipping_method'\]\);
+
+			if \(\!isset\(\$shipping\[0\]\) \|\| \!isset\(\$shipping\[1\]\) \|\| \!isset\(\$this\-\>session\-\>data\['shipping_methods'\]\[\$shipping\[0\]\]\['quote'\]\[\$shipping\[1\]\]\)\) \{
+				\$json\['error'\]\['warning'\] \= \$this\-\>language\-\>get\('error_shipping'\);
+			\}
+		\}
+
+		if \(\!\$json\) \{
+			\$this\-\>session\-\>data\['shipping_method'\] \= \$this\-\>session\-\>data\['shipping_methods'\]\[\$shipping\[0\]\]\['quote'\]\[\$shipping\[1\]\];
+
+			\$this\-\>session\-\>data\['comment'\] \= strip_tags\(\$this\-\>request\-\>post\['comment'\]\);
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCheckoutShippingMethod extends Controller {
+	public function index() {
+		$this->load->language('checkout/checkout');
+
+		if (isset($this->session->data['shipping_address'])) {
+			// Shipping Methods
+			$method_data = array();
+
+			$this->load->model('setting/extension');
+
+			$results = $this->model_setting_extension->getExtensions('shipping');
+
+			foreach ($results as $result) {
+				if ($this->config->get('shipping_' . $result['code'] . '_status')) {
+					$this->load->model('extension/shipping/' . $result['code']);
+
+					$quote = $this->{'model_extension_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
+
+					if ($quote) {
+						$method_data[$result['code']] = array(
+							'title'      => $quote['title'],
+							'quote'      => $quote['quote'],
+							'sort_order' => $quote['sort_order'],
+							'error'      => $quote['error']
+						);
+					}
+				}
+			}
+
+			$sort_order = array();
+
+			foreach ($method_data as $key => $value) {
+				$sort_order[$key] = $value['sort_order'];
+			}
+
+			array_multisort($sort_order, SORT_ASC, $method_data);
+
+			$this->session->data['shipping_methods'] = $method_data;
+		}
+
+		if (empty($this->session->data['shipping_methods'])) {
+			$data['error_warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
+		} else {
+			$data['error_warning'] = '';
+		}
+
+		if (isset($this->session->data['shipping_methods'])) {
+			$data['shipping_methods'] = $this->session->data['shipping_methods'];
+		} else {
+			$data['shipping_methods'] = array();
+		}
+
+		if (isset($this->session->data['shipping_method']['code'])) {
+			$data['code'] = $this->session->data['shipping_method']['code'];
+		} else {
+			$data['code'] = '';
+		}
+
+		$this->response->setOutput($this->load->view('checkout/shipping_method', $data));
+	}
+
+	public function save() {
+		$this->load->language('checkout/checkout');
+
+		$json = array();
+
+		// Validate if shipping is required. If not the customer should not have reached this page.
+		if (!$this->cart->hasShipping()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate if shipping address has been set.
+		if (!isset($this->session->data['shipping_address'])) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
+
+		// Validate minimum quantity requirements.
+		$products = $this->cart->getProducts();
+
+		foreach ($products as $product) {
+			$product_total = 0;
+
+			foreach ($products as $product_2) {
+				if ($product_2['product_id'] == $product['product_id']) {
+					$product_total += $product_2['quantity'];
+				}
+			}
+
+			if ($product['minimum'] > $product_total) {
+				$json['redirect'] = $this->url->link('checkout/cart');
+
+				break;
+			}
+		}
+
+		if (!isset($this->request->post['shipping_method'])) {
+			$json['error']['warning'] = $this->language->get('error_shipping');
+		} else {
+			$shipping = explode('.', $this->request->post['shipping_method']);
+
+			if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
+				$json['error']['warning'] = $this->language->get('error_shipping');
+			}
+		}
+
+		if (!$json) {
+			$this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
+
+			// The order comment field now lives on the payment method step
+			// only (no longer duplicated here), so it may be absent from
+			// this request - don't overwrite an already-saved comment.
+			if (isset($this->request->post['comment'])) {
+				$this->session->data['comment'] = strip_tags($this->request->post['comment']);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/checkout/guest.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCheckoutGuest extends Controller \{
+	public function index\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		\$data\['customer_groups'\] \= array\(\);
+
+		if \(is_array\(\$this\-\>config\-\>get\('config_customer_group_display'\)\)\) \{
+			\$this\-\>load\-\>model\('account/customer_group'\);
+
+			\$customer_groups \= \$this\-\>model_account_customer_group\-\>getCustomerGroups\(\);
+
+			foreach \(\$customer_groups as \$customer_group\) \{
+				if \(in_array\(\$customer_group\['customer_group_id'\], \$this\-\>config\-\>get\('config_customer_group_display'\)\)\) \{
+					\$data\['customer_groups'\]\[\] \= \$customer_group;
+				\}
+			\}
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['customer_group_id'\]\)\) \{
+			\$data\['customer_group_id'\] \= \$this\-\>session\-\>data\['guest'\]\['customer_group_id'\];
+		\} else \{
+			\$data\['customer_group_id'\] \= \$this\-\>config\-\>get\('config_customer_group_id'\);
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['firstname'\]\)\) \{
+			\$data\['firstname'\] \= \$this\-\>session\-\>data\['guest'\]\['firstname'\];
+		\} else \{
+			\$data\['firstname'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['lastname'\]\)\) \{
+			\$data\['lastname'\] \= \$this\-\>session\-\>data\['guest'\]\['lastname'\];
+		\} else \{
+			\$data\['lastname'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['email'\]\)\) \{
+			\$data\['email'\] \= \$this\-\>session\-\>data\['guest'\]\['email'\];
+		\} else \{
+			\$data\['email'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['telephone'\]\)\) \{
+			\$data\['telephone'\] \= \$this\-\>session\-\>data\['guest'\]\['telephone'\];
+		\} else \{
+			\$data\['telephone'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['company'\]\)\) \{
+			\$data\['company'\] \= \$this\-\>session\-\>data\['payment_address'\]\['company'\];
+		\} else \{
+			\$data\['company'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['address_1'\]\)\) \{
+			\$data\['address_1'\] \= \$this\-\>session\-\>data\['payment_address'\]\['address_1'\];
+		\} else \{
+			\$data\['address_1'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['address_2'\]\)\) \{
+			\$data\['address_2'\] \= \$this\-\>session\-\>data\['payment_address'\]\['address_2'\];
+		\} else \{
+			\$data\['address_2'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['postcode'\]\)\) \{
+			\$data\['postcode'\] \= \$this\-\>session\-\>data\['payment_address'\]\['postcode'\];
+		\} elseif \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['postcode'\]\)\) \{
+			\$data\['postcode'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['postcode'\];
+		\} else \{
+			\$data\['postcode'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['city'\]\)\) \{
+			\$data\['city'\] \= \$this\-\>session\-\>data\['payment_address'\]\['city'\];
+		\} else \{
+			\$data\['city'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['country_id'\]\)\) \{
+			\$data\['country_id'\] \= \$this\-\>session\-\>data\['payment_address'\]\['country_id'\];
+		\} elseif \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['country_id'\]\)\) \{
+			\$data\['country_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['country_id'\];
+		\} else \{
+			\$data\['country_id'\] \= \$this\-\>config\-\>get\('config_country_id'\);
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['zone_id'\]\)\) \{
+			\$data\['zone_id'\] \= \$this\-\>session\-\>data\['payment_address'\]\['zone_id'\];
+		\} elseif \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\]\)\) \{
+			\$data\['zone_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\];
+		\} else \{
+			\$data\['zone_id'\] \= '';
+		\}
+
+		\$this\-\>load\-\>model\('localisation/country'\);
+
+		\$data\['countries'\] \= \$this\-\>model_localisation_country\-\>getCountries\(\);
+
+		// Custom Fields
+		\$this\-\>load\-\>model\('account/custom_field'\);
+
+		\$data\['custom_fields'\] \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\);
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['custom_field'\]\)\) \{
+			if \(isset\(\$this\-\>session\-\>data\['guest'\]\['custom_field'\]\)\) \{
+				\$guest_custom_field \= \$this\-\>session\-\>data\['guest'\]\['custom_field'\];
+			\} else \{
+				\$guest_custom_field \= array\(\);
+			\}
+
+			if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['custom_field'\]\)\) \{
+				\$address_custom_field \= \$this\-\>session\-\>data\['payment_address'\]\['custom_field'\];
+			\} else \{
+				\$address_custom_field \= array\(\);
+			\}
+
+			\$data\['guest_custom_field'\] \= \$guest_custom_field \+ \$address_custom_field;
+		\} else \{
+			\$data\['guest_custom_field'\] \= array\(\);
+		\}
+
+		\$data\['shipping_required'\] \= \$this\-\>cart\-\>hasShipping\(\);
+
+		if \(isset\(\$this\-\>session\-\>data\['guest'\]\['shipping_address'\]\)\) \{
+			\$data\['shipping_address'\] \= \$this\-\>session\-\>data\['guest'\]\['shipping_address'\];
+		\} else \{
+			\$data\['shipping_address'\] \= true;
+		\}
+
+		// Captcha
+		if \(\$this\-\>config\-\>get\('captcha_' \. \$this\-\>config\-\>get\('config_captcha'\) \. '_status'\) && in_array\('guest', \(array\)\$this\-\>config\-\>get\('config_captcha_page'\)\)\) \{
+			\$data\['captcha'\] \= \$this\-\>load\-\>controller\('extension/captcha/' \. \$this\-\>config\-\>get\('config_captcha'\)\);
+		\} else \{
+			\$data\['captcha'\] \= '';
+		\}
+		
+		\$this\-\>response\-\>setOutput\(\$this\-\>load\-\>view\('checkout/guest', \$data\)\);
+	\}
+
+	public function save\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		\$json \= array\(\);
+
+		// Validate if customer is logged in\.
+		if \(\$this\-\>customer\-\>isLogged\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate cart has products and has stock\.
+		if \(\(\!\$this\-\>cart\-\>hasProducts\(\) && empty\(\$this\-\>session\-\>data\['vouchers'\]\)\) \|\| \(\!\$this\-\>cart\-\>hasStock\(\) && \!\$this\-\>config\-\>get\('config_stock_checkout'\)\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+		\}
+
+		// Check if guest checkout is available\.
+		if \(\!\$this\-\>config\-\>get\('config_checkout_guest'\) \|\| \$this\-\>config\-\>get\('config_customer_price'\) \|\| \$this\-\>cart\-\>hasDownload\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		if \(\!\$json\) \{
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \> 32\)\) \{
+				\$json\['error'\]\['firstname'\] \= \$this\-\>language\-\>get\('error_firstname'\);
+			\}
+
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \> 32\)\) \{
+				\$json\['error'\]\['lastname'\] \= \$this\-\>language\-\>get\('error_lastname'\);
+			\}
+
+			if \(\(utf8_strlen\(\$this\-\>request\-\>post\['email'\]\) \> 96\) \|\| \!filter_var\(\$this\-\>request\-\>post\['email'\], FILTER_VALIDATE_EMAIL\)\) \{
+				\$json\['error'\]\['email'\] \= \$this\-\>language\-\>get\('error_email'\);
+			\}
+
+			if \(\(utf8_strlen\(\$this\-\>request\-\>post\['telephone'\]\) \< 3\) \|\| \(utf8_strlen\(\$this\-\>request\-\>post\['telephone'\]\) \> 32\)\) \{
+
+				\$json\['error'\]\['telephone'\] \= \$this\-\>language\-\>get\('error_telephone'\);
+			\}
+
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \< 3\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \> 128\)\) \{
+				\$json\['error'\]\['address_1'\] \= \$this\-\>language\-\>get\('error_address_1'\);
+			\}
+
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['city'\]\)\) \< 2\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['city'\]\)\) \> 128\)\) \{
+				\$json\['error'\]\['city'\] \= \$this\-\>language\-\>get\('error_city'\);
+			\}
+
+			\$this\-\>load\-\>model\('localisation/country'\);
+
+			\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>post\['country_id'\]\);
+
+			if \(\$country_info && \$country_info\['postcode_required'\] && \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \< 2 \|\| utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \> 10\)\) \{
+				\$json\['error'\]\['postcode'\] \= \$this\-\>language\-\>get\('error_postcode'\);
+			\}
+
+			if \(\$this\-\>request\-\>post\['country_id'\] \=\= ''\) \{
+				\$json\['error'\]\['country'\] \= \$this\-\>language\-\>get\('error_country'\);
+			\}
+
+			if \(\!isset\(\$this\-\>request\-\>post\['zone_id'\]\) \|\| \$this\-\>request\-\>post\['zone_id'\] \=\= '' \|\| \!is_numeric\(\$this\-\>request\-\>post\['zone_id'\]\)\) \{
+				\$json\['error'\]\['zone'\] \= \$this\-\>language\-\>get\('error_zone'\);
+			\}
+
+			// Customer Group
+			if \(isset\(\$this\-\>request\-\>post\['customer_group_id'\]\) && is_array\(\$this\-\>config\-\>get\('config_customer_group_display'\)\) && in_array\(\$this\-\>request\-\>post\['customer_group_id'\], \$this\-\>config\-\>get\('config_customer_group_display'\)\)\) \{
+				\$customer_group_id \= \$this\-\>request\-\>post\['customer_group_id'\];
+			\} else \{
+				\$customer_group_id \= \$this\-\>config\-\>get\('config_customer_group_id'\);
+			\}
+
+			// Custom field validation
+			\$this\-\>load\-\>model\('account/custom_field'\);
+
+			\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$customer_group_id\);
+
+			foreach \(\$custom_fields as \$custom_field\) \{
+				if \(\$custom_field\['required'\] && empty\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\]\)\) \{
+					\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+				\} elseif \(\(\$custom_field\['type'\] \=\= 'text'\) && \!empty\(\$custom_field\['validation'\]\) && \!filter_var\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\], FILTER_VALIDATE_REGEXP, array\('options' \=\> array\('regexp' \=\> \$custom_field\['validation'\]\)\)\)\) \{
+                    \$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+                \}
+			\}
+
+			// Captcha
+			if \(\$this\-\>config\-\>get\('captcha_' \. \$this\-\>config\-\>get\('config_captcha'\) \. '_status'\) && in_array\('guest', \(array\)\$this\-\>config\-\>get\('config_captcha_page'\)\)\) \{
+				\$captcha \= \$this\-\>load\-\>controller\('extension/captcha/' \. \$this\-\>config\-\>get\('config_captcha'\) \. '/validate'\);
+
+				if \(\$captcha\) \{
+					\$json\['error'\]\['captcha'\] \= \$captcha;
+				\}
+			\}
+		\}
+
+		if \(\!\$json\) \{
+			\$this\-\>session\-\>data\['account'\] \= 'guest';
+
+			\$this\-\>session\-\>data\['guest'\]\['customer_group_id'\] \= \$customer_group_id;
+			\$this\-\>session\-\>data\['guest'\]\['firstname'\] \= \$this\-\>request\-\>post\['firstname'\];
+			\$this\-\>session\-\>data\['guest'\]\['lastname'\] \= \$this\-\>request\-\>post\['lastname'\];
+			\$this\-\>session\-\>data\['guest'\]\['email'\] \= \$this\-\>request\-\>post\['email'\];
+			\$this\-\>session\-\>data\['guest'\]\['telephone'\] \= \$this\-\>request\-\>post\['telephone'\];
+
+			if \(isset\(\$this\-\>request\-\>post\['custom_field'\]\['account'\]\)\) \{
+				\$this\-\>session\-\>data\['guest'\]\['custom_field'\] \= \$this\-\>request\-\>post\['custom_field'\]\['account'\];
+			\} else \{
+				\$this\-\>session\-\>data\['guest'\]\['custom_field'\] \= array\(\);
+			\}
+
+			\$this\-\>session\-\>data\['payment_address'\]\['firstname'\] \= \$this\-\>request\-\>post\['firstname'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['lastname'\] \= \$this\-\>request\-\>post\['lastname'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['company'\] \= \$this\-\>request\-\>post\['company'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['address_1'\] \= \$this\-\>request\-\>post\['address_1'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['address_2'\] \= \$this\-\>request\-\>post\['address_2'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['postcode'\] \= \$this\-\>request\-\>post\['postcode'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['city'\] \= \$this\-\>request\-\>post\['city'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['country_id'\] \= \$this\-\>request\-\>post\['country_id'\];
+			\$this\-\>session\-\>data\['payment_address'\]\['zone_id'\] \= \$this\-\>request\-\>post\['zone_id'\];
+
+			\$this\-\>load\-\>model\('localisation/country'\);
+
+			\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>post\['country_id'\]\);
+
+			if \(\$country_info\) \{
+				\$this\-\>session\-\>data\['payment_address'\]\['country'\] \= \$country_info\['name'\];
+				\$this\-\>session\-\>data\['payment_address'\]\['iso_code_2'\] \= \$country_info\['iso_code_2'\];
+				\$this\-\>session\-\>data\['payment_address'\]\['iso_code_3'\] \= \$country_info\['iso_code_3'\];
+				\$this\-\>session\-\>data\['payment_address'\]\['address_format'\] \= \$country_info\['address_format'\];
+			\} else \{
+				\$this\-\>session\-\>data\['payment_address'\]\['country'\] \= '';
+				\$this\-\>session\-\>data\['payment_address'\]\['iso_code_2'\] \= '';
+				\$this\-\>session\-\>data\['payment_address'\]\['iso_code_3'\] \= '';
+				\$this\-\>session\-\>data\['payment_address'\]\['address_format'\] \= '';
+			\}
+
+			if \(isset\(\$this\-\>request\-\>post\['custom_field'\]\['address'\]\)\) \{
+				\$this\-\>session\-\>data\['payment_address'\]\['custom_field'\] \= \$this\-\>request\-\>post\['custom_field'\]\['address'\];
+			\} else \{
+				\$this\-\>session\-\>data\['payment_address'\]\['custom_field'\] \= array\(\);
+			\}
+
+			\$this\-\>load\-\>model\('localisation/zone'\);
+
+			\$zone_info \= \$this\-\>model_localisation_zone\-\>getZone\(\$this\-\>request\-\>post\['zone_id'\]\);
+
+			if \(\$zone_info\) \{
+				\$this\-\>session\-\>data\['payment_address'\]\['zone'\] \= \$zone_info\['name'\];
+				\$this\-\>session\-\>data\['payment_address'\]\['zone_code'\] \= \$zone_info\['code'\];
+			\} else \{
+				\$this\-\>session\-\>data\['payment_address'\]\['zone'\] \= '';
+				\$this\-\>session\-\>data\['payment_address'\]\['zone_code'\] \= '';
+			\}
+
+			if \(\!empty\(\$this\-\>request\-\>post\['shipping_address'\]\)\) \{
+				\$this\-\>session\-\>data\['guest'\]\['shipping_address'\] \= \$this\-\>request\-\>post\['shipping_address'\];
+			\} else \{
+				\$this\-\>session\-\>data\['guest'\]\['shipping_address'\] \= false;
+			\}
+
+			if \(\$this\-\>session\-\>data\['guest'\]\['shipping_address'\]\) \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['firstname'\] \= \$this\-\>request\-\>post\['firstname'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['lastname'\] \= \$this\-\>request\-\>post\['lastname'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['company'\] \= \$this\-\>request\-\>post\['company'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['address_1'\] \= \$this\-\>request\-\>post\['address_1'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['address_2'\] \= \$this\-\>request\-\>post\['address_2'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['postcode'\] \= \$this\-\>request\-\>post\['postcode'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['city'\] \= \$this\-\>request\-\>post\['city'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['country_id'\] \= \$this\-\>request\-\>post\['country_id'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\] \= \$this\-\>request\-\>post\['zone_id'\];
+
+				if \(\$country_info\) \{
+					\$this\-\>session\-\>data\['shipping_address'\]\['country'\] \= \$country_info\['name'\];
+					\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_2'\] \= \$country_info\['iso_code_2'\];
+					\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_3'\] \= \$country_info\['iso_code_3'\];
+					\$this\-\>session\-\>data\['shipping_address'\]\['address_format'\] \= \$country_info\['address_format'\];
+				\} else \{
+					\$this\-\>session\-\>data\['shipping_address'\]\['country'\] \= '';
+					\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_2'\] \= '';
+					\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_3'\] \= '';
+					\$this\-\>session\-\>data\['shipping_address'\]\['address_format'\] \= '';
+				\}
+
+				if \(\$zone_info\) \{
+					\$this\-\>session\-\>data\['shipping_address'\]\['zone'\] \= \$zone_info\['name'\];
+					\$this\-\>session\-\>data\['shipping_address'\]\['zone_code'\] \= \$zone_info\['code'\];
+				\} else \{
+					\$this\-\>session\-\>data\['shipping_address'\]\['zone'\] \= '';
+					\$this\-\>session\-\>data\['shipping_address'\]\['zone_code'\] \= '';
+				\}
+
+				if \(isset\(\$this\-\>request\-\>post\['custom_field'\]\['address'\]\)\) \{
+					\$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\] \= \$this\-\>request\-\>post\['custom_field'\]\['address'\];
+				\} else \{
+					\$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\] \= array\(\);
+				\}
+			\}
+
+			unset\(\$this\-\>session\-\>data\['shipping_method'\]\);
+			unset\(\$this\-\>session\-\>data\['shipping_methods'\]\);
+			unset\(\$this\-\>session\-\>data\['payment_method'\]\);
+			unset\(\$this\-\>session\-\>data\['payment_methods'\]\);
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}
+\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCheckoutGuest extends Controller {
+	public function index() {
+		$this->load->language('checkout/checkout');
+
+		$data['customer_groups'] = array();
+
+		if (is_array($this->config->get('config_customer_group_display'))) {
+			$this->load->model('account/customer_group');
+
+			$customer_groups = $this->model_account_customer_group->getCustomerGroups();
+
+			foreach ($customer_groups as $customer_group) {
+				if (in_array($customer_group['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+					$data['customer_groups'][] = $customer_group;
+				}
+			}
+		}
+
+		if (isset($this->session->data['guest']['customer_group_id'])) {
+			$data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
+		} else {
+			$data['customer_group_id'] = $this->config->get('config_customer_group_id');
+		}
+
+		if (isset($this->session->data['guest']['firstname'])) {
+			$data['firstname'] = $this->session->data['guest']['firstname'];
+		} else {
+			$data['firstname'] = '';
+		}
+
+		if (isset($this->session->data['guest']['lastname'])) {
+			$data['lastname'] = $this->session->data['guest']['lastname'];
+		} else {
+			$data['lastname'] = '';
+		}
+
+		if (isset($this->session->data['guest']['email'])) {
+			$data['email'] = $this->session->data['guest']['email'];
+		} else {
+			$data['email'] = '';
+		}
+
+		if (isset($this->session->data['guest']['telephone'])) {
+			$data['telephone'] = $this->session->data['guest']['telephone'];
+		} else {
+			$data['telephone'] = '';
+		}
+
+		if (isset($this->session->data['payment_address']['company'])) {
+			$data['company'] = $this->session->data['payment_address']['company'];
+		} else {
+			$data['company'] = '';
+		}
+
+		if (isset($this->session->data['payment_address']['address_1'])) {
+			$data['address_1'] = $this->session->data['payment_address']['address_1'];
+		} else {
+			$data['address_1'] = '';
+		}
+
+		if (isset($this->session->data['payment_address']['address_2'])) {
+			$data['address_2'] = $this->session->data['payment_address']['address_2'];
+		} else {
+			$data['address_2'] = '';
+		}
+
+		if (isset($this->session->data['payment_address']['postcode'])) {
+			$data['postcode'] = $this->session->data['payment_address']['postcode'];
+		} elseif (isset($this->session->data['shipping_address']['postcode'])) {
+			$data['postcode'] = $this->session->data['shipping_address']['postcode'];
+		} else {
+			$data['postcode'] = '';
+		}
+
+		if (isset($this->session->data['payment_address']['city'])) {
+			$data['city'] = $this->session->data['payment_address']['city'];
+		} else {
+			$data['city'] = '';
+		}
+
+		if (isset($this->session->data['payment_address']['country_id'])) {
+			$data['country_id'] = $this->session->data['payment_address']['country_id'];
+		} elseif (isset($this->session->data['shipping_address']['country_id'])) {
+			$data['country_id'] = $this->session->data['shipping_address']['country_id'];
+		} else {
+			$data['country_id'] = $this->config->get('config_country_id');
+		}
+
+		if (isset($this->session->data['payment_address']['zone_id'])) {
+			$data['zone_id'] = $this->session->data['payment_address']['zone_id'];
+		} elseif (isset($this->session->data['shipping_address']['zone_id'])) {
+			$data['zone_id'] = $this->session->data['shipping_address']['zone_id'];
+		} else {
+			$data['zone_id'] = '';
+		}
+
+		$this->load->model('localisation/country');
+
+		$data['countries'] = $this->model_localisation_country->getCountries();
+
+		// Custom Fields
+		$this->load->model('account/custom_field');
+
+		$data['custom_fields'] = $this->model_account_custom_field->getCustomFields();
+
+		if (isset($this->session->data['guest']['custom_field'])) {
+			if (isset($this->session->data['guest']['custom_field'])) {
+				$guest_custom_field = $this->session->data['guest']['custom_field'];
+			} else {
+				$guest_custom_field = array();
+			}
+
+			if (isset($this->session->data['payment_address']['custom_field'])) {
+				$address_custom_field = $this->session->data['payment_address']['custom_field'];
+			} else {
+				$address_custom_field = array();
+			}
+
+			$data['guest_custom_field'] = $guest_custom_field + $address_custom_field;
+		} else {
+			$data['guest_custom_field'] = array();
+		}
+
+		$data['shipping_required'] = $this->cart->hasShipping();
+
+		if (isset($this->session->data['guest']['shipping_address'])) {
+			$data['shipping_address'] = $this->session->data['guest']['shipping_address'];
+		} else {
+			$data['shipping_address'] = true;
+		}
+
+		// Captcha
+		if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('guest', (array)$this->config->get('config_captcha_page'))) {
+			$data['captcha'] = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha'));
+		} else {
+			$data['captcha'] = '';
+		}
+
+		$this->response->setOutput($this->load->view('checkout/guest', $data));
+	}
+
+	public function save() {
+		$this->load->language('checkout/checkout');
+
+		$json = array();
+
+		// Validate if customer is logged in.
+		if ($this->customer->isLogged()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
+
+		// Check if guest checkout is available.
+		if (!$this->config->get('config_checkout_guest') || $this->config->get('config_customer_price') || $this->cart->hasDownload()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		if (!$json) {
+			if ((utf8_strlen(trim($this->request->post['firstname'])) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
+				$json['error']['firstname'] = $this->language->get('error_firstname');
+			}
+
+			if ((utf8_strlen(trim($this->request->post['lastname'])) < 1) || (utf8_strlen(trim($this->request->post['lastname'])) > 32)) {
+				$json['error']['lastname'] = $this->language->get('error_lastname');
+			}
+
+			if ((utf8_strlen($this->request->post['email']) > 96) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
+				$json['error']['email'] = $this->language->get('error_email');
+			}
+
+			if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+
+				$json['error']['telephone'] = $this->language->get('error_telephone');
+			}
+
+			// Nova Poshta delivery does not require a full billing address here -
+			// the real delivery address (city + branch/locker) is collected in
+			// the shipping address step. Fill placeholders instead of validating.
+			if (empty($this->request->post['address_1'])) {
+				$this->request->post['address_1'] = 'Нова Пошта';
+			}
+
+			if (empty($this->request->post['city'])) {
+				$this->request->post['city'] = 'Україна';
+			}
+
+			if (empty($this->request->post['country_id'])) {
+				$this->request->post['country_id'] = $this->config->get('config_country_id');
+			}
+
+			if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] === '') {
+				$this->request->post['zone_id'] = 0;
+			}
+
+			// Customer Group
+			if (isset($this->request->post['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->post['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+				$customer_group_id = $this->request->post['customer_group_id'];
+			} else {
+				$customer_group_id = $this->config->get('config_customer_group_id');
+			}
+
+			// Custom field validation
+			$this->load->model('account/custom_field');
+
+			$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
+
+			foreach ($custom_fields as $custom_field) {
+				if ($custom_field['location'] == 'account' && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {
+					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+				} elseif ($custom_field['location'] == 'account' && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
+                    $json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                }
+			}
+
+			// Captcha
+			if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('guest', (array)$this->config->get('config_captcha_page'))) {
+				$captcha = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha') . '/validate');
+
+				if ($captcha) {
+					$json['error']['captcha'] = $captcha;
+				}
+			}
+		}
+
+		if (!$json) {
+			$this->session->data['account'] = 'guest';
+
+			$this->session->data['guest']['customer_group_id'] = $customer_group_id;
+			$this->session->data['guest']['firstname'] = $this->request->post['firstname'];
+			$this->session->data['guest']['lastname'] = $this->request->post['lastname'];
+			$this->session->data['guest']['email'] = $this->request->post['email'];
+			$this->session->data['guest']['telephone'] = $this->request->post['telephone'];
+
+			if (isset($this->request->post['custom_field']['account'])) {
+				$this->session->data['guest']['custom_field'] = $this->request->post['custom_field']['account'];
+			} else {
+				$this->session->data['guest']['custom_field'] = array();
+			}
+
+			$this->session->data['payment_address']['firstname'] = $this->request->post['firstname'];
+			$this->session->data['payment_address']['lastname'] = $this->request->post['lastname'];
+			$this->session->data['payment_address']['company'] = $this->request->post['company'];
+			$this->session->data['payment_address']['address_1'] = $this->request->post['address_1'];
+			$this->session->data['payment_address']['address_2'] = $this->request->post['address_2'];
+			$this->session->data['payment_address']['postcode'] = $this->request->post['postcode'];
+			$this->session->data['payment_address']['city'] = $this->request->post['city'];
+			$this->session->data['payment_address']['country_id'] = $this->request->post['country_id'];
+			$this->session->data['payment_address']['zone_id'] = $this->request->post['zone_id'];
+
+			$this->load->model('localisation/country');
+
+			$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
+
+			if ($country_info) {
+				$this->session->data['payment_address']['country'] = $country_info['name'];
+				$this->session->data['payment_address']['iso_code_2'] = $country_info['iso_code_2'];
+				$this->session->data['payment_address']['iso_code_3'] = $country_info['iso_code_3'];
+				$this->session->data['payment_address']['address_format'] = $country_info['address_format'];
+			} else {
+				$this->session->data['payment_address']['country'] = '';
+				$this->session->data['payment_address']['iso_code_2'] = '';
+				$this->session->data['payment_address']['iso_code_3'] = '';
+				$this->session->data['payment_address']['address_format'] = '';
+			}
+
+			if (isset($this->request->post['custom_field']['address'])) {
+				$this->session->data['payment_address']['custom_field'] = $this->request->post['custom_field']['address'];
+			} else {
+				$this->session->data['payment_address']['custom_field'] = array();
+			}
+
+			$this->load->model('localisation/zone');
+
+			$zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
+
+			if ($zone_info) {
+				$this->session->data['payment_address']['zone'] = $zone_info['name'];
+				$this->session->data['payment_address']['zone_code'] = $zone_info['code'];
+			} else {
+				$this->session->data['payment_address']['zone'] = '';
+				$this->session->data['payment_address']['zone_code'] = '';
+			}
+
+			if (!empty($this->request->post['shipping_address'])) {
+				$this->session->data['guest']['shipping_address'] = $this->request->post['shipping_address'];
+			} else {
+				$this->session->data['guest']['shipping_address'] = false;
+			}
+
+			if ($this->session->data['guest']['shipping_address']) {
+				$this->session->data['shipping_address']['firstname'] = $this->request->post['firstname'];
+				$this->session->data['shipping_address']['lastname'] = $this->request->post['lastname'];
+				$this->session->data['shipping_address']['company'] = $this->request->post['company'];
+				$this->session->data['shipping_address']['address_1'] = $this->request->post['address_1'];
+				$this->session->data['shipping_address']['address_2'] = $this->request->post['address_2'];
+				$this->session->data['shipping_address']['postcode'] = $this->request->post['postcode'];
+				$this->session->data['shipping_address']['city'] = $this->request->post['city'];
+				$this->session->data['shipping_address']['country_id'] = $this->request->post['country_id'];
+				$this->session->data['shipping_address']['zone_id'] = $this->request->post['zone_id'];
+
+				if ($country_info) {
+					$this->session->data['shipping_address']['country'] = $country_info['name'];
+					$this->session->data['shipping_address']['iso_code_2'] = $country_info['iso_code_2'];
+					$this->session->data['shipping_address']['iso_code_3'] = $country_info['iso_code_3'];
+					$this->session->data['shipping_address']['address_format'] = $country_info['address_format'];
+				} else {
+					$this->session->data['shipping_address']['country'] = '';
+					$this->session->data['shipping_address']['iso_code_2'] = '';
+					$this->session->data['shipping_address']['iso_code_3'] = '';
+					$this->session->data['shipping_address']['address_format'] = '';
+				}
+
+				if ($zone_info) {
+					$this->session->data['shipping_address']['zone'] = $zone_info['name'];
+					$this->session->data['shipping_address']['zone_code'] = $zone_info['code'];
+				} else {
+					$this->session->data['shipping_address']['zone'] = '';
+					$this->session->data['shipping_address']['zone_code'] = '';
+				}
+
+				if (isset($this->request->post['custom_field']['address'])) {
+					$this->session->data['shipping_address']['custom_field'] = $this->request->post['custom_field']['address'];
+				} else {
+					$this->session->data['shipping_address']['custom_field'] = array();
+				}
+			}
+
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+			unset($this->session->data['payment_method']);
+			unset($this->session->data['payment_methods']);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/checkout/payment_address.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCheckoutPaymentAddress extends Controller \{
+	public function index\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['address_id'\]\)\) \{
+			\$data\['address_id'\] \= \$this\-\>session\-\>data\['payment_address'\]\['address_id'\];
+		\} else \{
+			\$data\['address_id'\] \= \$this\-\>customer\-\>getAddressId\(\);
+		\}
+
+		\$this\-\>load\-\>model\('account/address'\);
+
+		\$data\['addresses'\] \= \$this\-\>model_account_address\-\>getAddresses\(\);
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['country_id'\]\)\) \{
+			\$data\['country_id'\] \= \$this\-\>session\-\>data\['payment_address'\]\['country_id'\];
+		\} else \{
+			\$data\['country_id'\] \= \$this\-\>config\-\>get\('config_country_id'\);
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['zone_id'\]\)\) \{
+			\$data\['zone_id'\] \= \$this\-\>session\-\>data\['payment_address'\]\['zone_id'\];
+		\} else \{
+			\$data\['zone_id'\] \= '';
+		\}
+
+		\$this\-\>load\-\>model\('localisation/country'\);
+
+		\$data\['countries'\] \= \$this\-\>model_localisation_country\-\>getCountries\(\);
+
+		// Custom Fields
+		\$data\['custom_fields'\] \= array\(\);
+		
+		\$this\-\>load\-\>model\('account/custom_field'\);
+
+		\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$this\-\>config\-\>get\('config_customer_group_id'\)\);
+
+		foreach \(\$custom_fields as \$custom_field\) \{
+			if \(\$custom_field\['location'\] \=\= 'address'\) \{
+				\$data\['custom_fields'\]\[\] \= \$custom_field;
+			\}
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['payment_address'\]\['custom_field'\]\)\) \{
+			\$data\['payment_address_custom_field'\] \= \$this\-\>session\-\>data\['payment_address'\]\['custom_field'\];
+		\} else \{
+			\$data\['payment_address_custom_field'\] \= array\(\);
+		\}
+
+		\$this\-\>response\-\>setOutput\(\$this\-\>load\-\>view\('checkout/payment_address', \$data\)\);
+	\}
+
+	public function save\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		\$json \= array\(\);
+
+		// Validate if customer is logged in\.
+		if \(\!\$this\-\>customer\-\>isLogged\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate cart has products and has stock\.
+		if \(\(\!\$this\-\>cart\-\>hasProducts\(\) && empty\(\$this\-\>session\-\>data\['vouchers'\]\)\) \|\| \(\!\$this\-\>cart\-\>hasStock\(\) && \!\$this\-\>config\-\>get\('config_stock_checkout'\)\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+		\}
+
+		// Validate minimum quantity requirements\.
+		\$products \= \$this\-\>cart\-\>getProducts\(\);
+
+		foreach \(\$products as \$product\) \{
+			\$product_total \= 0;
+
+			foreach \(\$products as \$product_2\) \{
+				if \(\$product_2\['product_id'\] \=\= \$product\['product_id'\]\) \{
+					\$product_total \+\= \$product_2\['quantity'\];
+				\}
+			\}
+
+			if \(\$product\['minimum'\] \> \$product_total\) \{
+				\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+
+				break;
+			\}
+		\}
+
+		if \(\!\$json\) \{
+			\$this\-\>load\-\>model\('account/address'\);
+							
+			if \(isset\(\$this\-\>request\-\>post\['payment_address'\]\) && \$this\-\>request\-\>post\['payment_address'\] \=\= 'existing'\) \{
+				if \(empty\(\$this\-\>request\-\>post\['address_id'\]\)\) \{
+					\$json\['error'\]\['warning'\] \= \$this\-\>language\-\>get\('error_address'\);
+				\} elseif \(\!in_array\(\$this\-\>request\-\>post\['address_id'\], array_keys\(\$this\-\>model_account_address\-\>getAddresses\(\)\)\)\) \{
+					\$json\['error'\]\['warning'\] \= \$this\-\>language\-\>get\('error_address'\);
+				\}
+
+				if \(\!\$json\) \{
+					\$this\-\>session\-\>data\['payment_address'\] \= \$this\-\>model_account_address\-\>getAddress\(\$this\-\>request\-\>post\['address_id'\]\);
+
+					unset\(\$this\-\>session\-\>data\['payment_method'\]\);
+					unset\(\$this\-\>session\-\>data\['payment_methods'\]\);
+				\}
+			\} else \{
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \> 32\)\) \{
+					\$json\['error'\]\['firstname'\] \= \$this\-\>language\-\>get\('error_firstname'\);
+				\}
+
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \> 32\)\) \{
+					\$json\['error'\]\['lastname'\] \= \$this\-\>language\-\>get\('error_lastname'\);
+				\}
+
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \< 3\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \> 128\)\) \{
+					\$json\['error'\]\['address_1'\] \= \$this\-\>language\-\>get\('error_address_1'\);
+				\}
+
+				if \(\(utf8_strlen\(\$this\-\>request\-\>post\['city'\]\) \< 2\) \|\| \(utf8_strlen\(\$this\-\>request\-\>post\['city'\]\) \> 32\)\) \{
+					\$json\['error'\]\['city'\] \= \$this\-\>language\-\>get\('error_city'\);
+				\}
+
+				\$this\-\>load\-\>model\('localisation/country'\);
+
+				\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>post\['country_id'\]\);
+
+				if \(\$country_info && \$country_info\['postcode_required'\] && \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \< 2 \|\| utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \> 10\)\) \{
+					\$json\['error'\]\['postcode'\] \= \$this\-\>language\-\>get\('error_postcode'\);
+				\}
+
+				if \(\$this\-\>request\-\>post\['country_id'\] \=\= ''\) \{
+					\$json\['error'\]\['country'\] \= \$this\-\>language\-\>get\('error_country'\);
+				\}
+
+				if \(\!isset\(\$this\-\>request\-\>post\['zone_id'\]\) \|\| \$this\-\>request\-\>post\['zone_id'\] \=\= '' \|\| \!is_numeric\(\$this\-\>request\-\>post\['zone_id'\]\)\) \{
+					\$json\['error'\]\['zone'\] \= \$this\-\>language\-\>get\('error_zone'\);
+				\}
+
+				// Custom field validation
+				\$this\-\>load\-\>model\('account/custom_field'\);
+
+				\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$this\-\>config\-\>get\('config_customer_group_id'\)\);
+
+				foreach \(\$custom_fields as \$custom_field\) \{
+					if \(\$custom_field\['location'\] \=\= 'address'\) \{
+						if \(\$custom_field\['required'\] && empty\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\]\)\) \{
+							\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+						\} elseif \(\(\$custom_field\['type'\] \=\= 'text'\) && \!empty\(\$custom_field\['validation'\]\) && \!filter_var\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\], FILTER_VALIDATE_REGEXP, array\('options' \=\> array\('regexp' \=\> \$custom_field\['validation'\]\)\)\)\) \{
+							\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+						\}
+					\}
+				\}
+
+				if \(\!\$json\) \{
+					\$address_id \= \$this\-\>model_account_address\-\>addAddress\(\$this\-\>customer\-\>getId\(\), \$this\-\>request\-\>post\);
+
+					\$this\-\>session\-\>data\['payment_address'\] \= \$this\-\>model_account_address\-\>getAddress\(\$address_id\);
+
+					// If no default address ID set we use the last address
+					if \(\!\$this\-\>customer\-\>getAddressId\(\)\) \{
+						\$this\-\>load\-\>model\('account/customer'\);
+						
+						\$this\-\>model_account_customer\-\>editAddressId\(\$this\-\>customer\-\>getId\(\), \$address_id\);
+					\}
+
+					unset\(\$this\-\>session\-\>data\['payment_method'\]\);
+					unset\(\$this\-\>session\-\>data\['payment_methods'\]\);
+				\}
+			\}
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCheckoutPaymentAddress extends Controller {
+	public function index() {
+		$this->load->language('checkout/checkout');
+
+		if (isset($this->session->data['payment_address']['address_id'])) {
+			$data['address_id'] = $this->session->data['payment_address']['address_id'];
+		} else {
+			$data['address_id'] = $this->customer->getAddressId();
+		}
+
+		$this->load->model('account/address');
+
+		$data['addresses'] = $this->model_account_address->getAddresses();
+
+		if (isset($this->session->data['payment_address']['country_id'])) {
+			$data['country_id'] = $this->session->data['payment_address']['country_id'];
+		} else {
+			$data['country_id'] = $this->config->get('config_country_id');
+		}
+
+		if (isset($this->session->data['payment_address']['zone_id'])) {
+			$data['zone_id'] = $this->session->data['payment_address']['zone_id'];
+		} else {
+			$data['zone_id'] = '';
+		}
+
+		// Nova Poshta delivery no longer collects a full billing address here,
+		// only the recipient's name/contact - default them from the account.
+		$data['firstname'] = isset($this->session->data['payment_address']['firstname'])
+			? $this->session->data['payment_address']['firstname']
+			: $this->customer->getFirstname();
+		$data['lastname'] = isset($this->session->data['payment_address']['lastname'])
+			? $this->session->data['payment_address']['lastname']
+			: $this->customer->getLastname();
+		$data['email'] = $this->customer->getEmail();
+		$data['telephone'] = $this->customer->getTelephone();
+
+		$this->load->model('localisation/country');
+
+		$data['countries'] = $this->model_localisation_country->getCountries();
+
+		// Custom Fields
+		$data['custom_fields'] = array();
+
+		$this->load->model('account/custom_field');
+
+		$custom_fields = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
+
+		foreach ($custom_fields as $custom_field) {
+			if ($custom_field['location'] == 'address') {
+				$data['custom_fields'][] = $custom_field;
+			}
+		}
+
+		if (isset($this->session->data['payment_address']['custom_field'])) {
+			$data['payment_address_custom_field'] = $this->session->data['payment_address']['custom_field'];
+		} else {
+			$data['payment_address_custom_field'] = array();
+		}
+
+		$this->response->setOutput($this->load->view('checkout/payment_address', $data));
+	}
+
+	public function save() {
+		$this->load->language('checkout/checkout');
+
+		$json = array();
+
+		// Validate if customer is logged in.
+		if (!$this->customer->isLogged()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
+
+		// Validate minimum quantity requirements.
+		$products = $this->cart->getProducts();
+
+		foreach ($products as $product) {
+			$product_total = 0;
+
+			foreach ($products as $product_2) {
+				if ($product_2['product_id'] == $product['product_id']) {
+					$product_total += $product_2['quantity'];
+				}
+			}
+
+			if ($product['minimum'] > $product_total) {
+				$json['redirect'] = $this->url->link('checkout/cart');
+
+				break;
+			}
+		}
+
+		if (!$json) {
+			$this->load->model('account/address');
+
+			// The simplified checkout form has no name field for logged-in
+			// customers (already known) - default from the account so this
+			// still validates even when firstname/lastname aren't posted.
+			if (empty($this->request->post['firstname'])) {
+				$this->request->post['firstname'] = $this->customer->getFirstname();
+			}
+
+			if (empty($this->request->post['lastname'])) {
+				$this->request->post['lastname'] = $this->customer->getLastname();
+			}
+
+			if ((utf8_strlen(trim($this->request->post['firstname'])) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
+				$json['error']['firstname'] = $this->language->get('error_firstname');
+			}
+
+			if ((utf8_strlen(trim($this->request->post['lastname'])) < 1) || (utf8_strlen(trim($this->request->post['lastname'])) > 32)) {
+				$json['error']['lastname'] = $this->language->get('error_lastname');
+			}
+
+			// Nova Poshta delivery does not require a full billing address here -
+			// the real delivery address (city + branch/locker) is collected in
+			// the shipping address step. Fill placeholders instead of validating.
+			if (empty($this->request->post['address_1'])) {
+				$this->request->post['address_1'] = 'Нова Пошта';
+			}
+
+			if (empty($this->request->post['city'])) {
+				$this->request->post['city'] = 'Україна';
+			}
+
+			if (empty($this->request->post['country_id'])) {
+				$this->request->post['country_id'] = $this->config->get('config_country_id');
+			}
+
+			if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] === '') {
+				$this->request->post['zone_id'] = 0;
+			}
+
+			if (!$json) {
+				$this->session->data['payment_address']['firstname'] = $this->request->post['firstname'];
+				$this->session->data['payment_address']['lastname'] = $this->request->post['lastname'];
+				$this->session->data['payment_address']['company'] = $this->request->post['company'];
+				$this->session->data['payment_address']['address_1'] = $this->request->post['address_1'];
+				$this->session->data['payment_address']['address_2'] = $this->request->post['address_2'];
+				$this->session->data['payment_address']['postcode'] = $this->request->post['postcode'];
+				$this->session->data['payment_address']['city'] = $this->request->post['city'];
+				$this->session->data['payment_address']['country_id'] = $this->request->post['country_id'];
+				$this->session->data['payment_address']['zone_id'] = $this->request->post['zone_id'];
+
+				$this->load->model('localisation/country');
+
+				$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
+
+				if ($country_info) {
+					$this->session->data['payment_address']['country'] = $country_info['name'];
+					$this->session->data['payment_address']['iso_code_2'] = $country_info['iso_code_2'];
+					$this->session->data['payment_address']['iso_code_3'] = $country_info['iso_code_3'];
+					$this->session->data['payment_address']['address_format'] = $country_info['address_format'];
+				} else {
+					$this->session->data['payment_address']['country'] = '';
+					$this->session->data['payment_address']['iso_code_2'] = '';
+					$this->session->data['payment_address']['iso_code_3'] = '';
+					$this->session->data['payment_address']['address_format'] = '';
+				}
+
+				$this->load->model('localisation/zone');
+
+				$zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
+
+				if ($zone_info) {
+					$this->session->data['payment_address']['zone'] = $zone_info['name'];
+					$this->session->data['payment_address']['zone_code'] = $zone_info['code'];
+				} else {
+					$this->session->data['payment_address']['zone'] = '';
+					$this->session->data['payment_address']['zone_code'] = '';
+				}
+
+				// Recipient telephone is not part of the standard payment_address
+				// flow - persist it to the customer's own profile if changed.
+				if (!empty($this->request->post['telephone']) && $this->request->post['telephone'] !== $this->customer->getTelephone()) {
+					$this->load->model('account/customer');
+
+					$this->model_account_customer->editCustomer($this->customer->getId(), array(
+						'firstname'  => $this->customer->getFirstname(),
+						'lastname'   => $this->customer->getLastname(),
+						'email'      => $this->customer->getEmail(),
+						'telephone'  => $this->request->post['telephone'],
+						'newsletter' => $this->customer->getNewsletter()
+					));
+				}
+
+				unset($this->session->data['payment_method']);
+				unset($this->session->data['payment_methods']);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/checkout/shipping_address.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCheckoutShippingAddress extends Controller \{
+	public function index\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['address_id'\]\)\) \{
+			\$data\['address_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['address_id'\];
+		\} else \{
+			\$data\['address_id'\] \= \$this\-\>customer\-\>getAddressId\(\);
+		\}
+
+		\$this\-\>load\-\>model\('account/address'\);
+
+		\$data\['addresses'\] \= \$this\-\>model_account_address\-\>getAddresses\(\);
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['postcode'\]\)\) \{
+			\$data\['postcode'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['postcode'\];
+		\} else \{
+			\$data\['postcode'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['country_id'\]\)\) \{
+			\$data\['country_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['country_id'\];
+		\} else \{
+			\$data\['country_id'\] \= \$this\-\>config\-\>get\('config_country_id'\);
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\]\)\) \{
+			\$data\['zone_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\];
+		\} else \{
+			\$data\['zone_id'\] \= '';
+		\}
+
+		\$this\-\>load\-\>model\('localisation/country'\);
+
+		\$data\['countries'\] \= \$this\-\>model_localisation_country\-\>getCountries\(\);
+
+		// Custom Fields
+		\$data\['custom_fields'\] \= array\(\);
+		
+		\$this\-\>load\-\>model\('account/custom_field'\);
+
+		\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$this\-\>config\-\>get\('config_customer_group_id'\)\);
+
+		foreach \(\$custom_fields as \$custom_field\) \{
+			if \(\$custom_field\['location'\] \=\= 'address'\) \{
+				\$data\['custom_fields'\]\[\] \= \$custom_field;
+			\}
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\]\)\) \{
+			\$data\['shipping_address_custom_field'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\];
+		\} else \{
+			\$data\['shipping_address_custom_field'\] \= array\(\);
+		\}
+		
+		\$this\-\>response\-\>setOutput\(\$this\-\>load\-\>view\('checkout/shipping_address', \$data\)\);
+	\}
+
+	public function save\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+		
+		\$json \= array\(\);
+
+		// Validate if customer is logged in\.
+		if \(\!\$this\-\>customer\-\>isLogged\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate if shipping is required\. If not the customer should not have reached this page\.
+		if \(\!\$this\-\>cart\-\>hasShipping\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate cart has products and has stock\.
+		if \(\(\!\$this\-\>cart\-\>hasProducts\(\) && empty\(\$this\-\>session\-\>data\['vouchers'\]\)\) \|\| \(\!\$this\-\>cart\-\>hasStock\(\) && \!\$this\-\>config\-\>get\('config_stock_checkout'\)\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+		\}
+
+		// Validate minimum quantity requirements\.
+		\$products \= \$this\-\>cart\-\>getProducts\(\);
+
+		foreach \(\$products as \$product\) \{
+			\$product_total \= 0;
+
+			foreach \(\$products as \$product_2\) \{
+				if \(\$product_2\['product_id'\] \=\= \$product\['product_id'\]\) \{
+					\$product_total \+\= \$product_2\['quantity'\];
+				\}
+			\}
+
+			if \(\$product\['minimum'\] \> \$product_total\) \{
+				\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+
+				break;
+			\}
+		\}
+
+		if \(\!\$json\) \{
+			\$this\-\>load\-\>model\('account/address'\);
+			
+			if \(isset\(\$this\-\>request\-\>post\['shipping_address'\]\) && \$this\-\>request\-\>post\['shipping_address'\] \=\= 'existing'\) \{
+				if \(empty\(\$this\-\>request\-\>post\['address_id'\]\)\) \{
+					\$json\['error'\]\['warning'\] \= \$this\-\>language\-\>get\('error_address'\);
+				\} elseif \(\!in_array\(\$this\-\>request\-\>post\['address_id'\], array_keys\(\$this\-\>model_account_address\-\>getAddresses\(\)\)\)\) \{
+					\$json\['error'\]\['warning'\] \= \$this\-\>language\-\>get\('error_address'\);
+				\}
+
+				if \(\!\$json\) \{
+					\$this\-\>session\-\>data\['shipping_address'\] \= \$this\-\>model_account_address\-\>getAddress\(\$this\-\>request\-\>post\['address_id'\]\);
+
+					unset\(\$this\-\>session\-\>data\['shipping_method'\]\);
+					unset\(\$this\-\>session\-\>data\['shipping_methods'\]\);
+				\}
+			\} else \{
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \> 32\)\) \{
+					\$json\['error'\]\['firstname'\] \= \$this\-\>language\-\>get\('error_firstname'\);
+				\}
+
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \> 32\)\) \{
+					\$json\['error'\]\['lastname'\] \= \$this\-\>language\-\>get\('error_lastname'\);
+				\}
+
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \< 3\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \> 128\)\) \{
+					\$json\['error'\]\['address_1'\] \= \$this\-\>language\-\>get\('error_address_1'\);
+				\}
+
+				if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['city'\]\)\) \< 2\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['city'\]\)\) \> 128\)\) \{
+					\$json\['error'\]\['city'\] \= \$this\-\>language\-\>get\('error_city'\);
+				\}
+
+				\$this\-\>load\-\>model\('localisation/country'\);
+
+				\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>post\['country_id'\]\);
+
+				if \(\$country_info && \$country_info\['postcode_required'\] && \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \< 2 \|\| utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \> 10\)\) \{
+					\$json\['error'\]\['postcode'\] \= \$this\-\>language\-\>get\('error_postcode'\);
+				\}
+
+				if \(\$this\-\>request\-\>post\['country_id'\] \=\= ''\) \{
+					\$json\['error'\]\['country'\] \= \$this\-\>language\-\>get\('error_country'\);
+				\}
+
+				if \(\!isset\(\$this\-\>request\-\>post\['zone_id'\]\) \|\| \$this\-\>request\-\>post\['zone_id'\] \=\= '' \|\| \!is_numeric\(\$this\-\>request\-\>post\['zone_id'\]\)\) \{
+					\$json\['error'\]\['zone'\] \= \$this\-\>language\-\>get\('error_zone'\);
+				\}
+
+				// Custom field validation
+				\$this\-\>load\-\>model\('account/custom_field'\);
+
+				\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$this\-\>config\-\>get\('config_customer_group_id'\)\);
+
+				foreach \(\$custom_fields as \$custom_field\) \{
+					if \(\$custom_field\['location'\] \=\= 'address'\) \{
+						if \(\$custom_field\['required'\] && empty\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\]\)\) \{
+							\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+						\} elseif \(\(\$custom_field\['type'\] \=\= 'text'\) && \!empty\(\$custom_field\['validation'\]\) && \!filter_var\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\], FILTER_VALIDATE_REGEXP, array\('options' \=\> array\('regexp' \=\> \$custom_field\['validation'\]\)\)\)\) \{
+							\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+						\}
+					\}
+				\}
+
+				if \(\!\$json\) \{
+					\$address_id \= \$this\-\>model_account_address\-\>addAddress\(\$this\-\>customer\-\>getId\(\), \$this\-\>request\-\>post\);
+
+					\$this\-\>session\-\>data\['shipping_address'\] \= \$this\-\>model_account_address\-\>getAddress\(\$address_id\);
+
+					// If no default address ID set we use the last address
+					if \(\!\$this\-\>customer\-\>getAddressId\(\)\) \{
+						\$this\-\>load\-\>model\('account/customer'\);
+						
+						\$this\-\>model_account_customer\-\>editAddressId\(\$this\-\>customer\-\>getId\(\), \$address_id\);
+					\}
+					
+					unset\(\$this\-\>session\-\>data\['shipping_method'\]\);
+					unset\(\$this\-\>session\-\>data\['shipping_methods'\]\);
+				\}
+			\}
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCheckoutShippingAddress extends Controller {
+	public function index() {
+		$this->load->language('checkout/checkout');
+
+		if (isset($this->session->data['shipping_address']['address_id'])) {
+			$data['address_id'] = $this->session->data['shipping_address']['address_id'];
+		} else {
+			$data['address_id'] = $this->customer->getAddressId();
+		}
+
+		$this->load->model('account/address');
+
+		$data['addresses'] = $this->model_account_address->getAddresses();
+
+		if (isset($this->session->data['shipping_address']['postcode'])) {
+			$data['postcode'] = $this->session->data['shipping_address']['postcode'];
+		} else {
+			$data['postcode'] = '';
+		}
+
+		if (isset($this->session->data['shipping_address']['country_id'])) {
+			$data['country_id'] = $this->session->data['shipping_address']['country_id'];
+		} else {
+			$data['country_id'] = $this->config->get('config_country_id');
+		}
+
+		if (isset($this->session->data['shipping_address']['zone_id'])) {
+			$data['zone_id'] = $this->session->data['shipping_address']['zone_id'];
+		} else {
+			$data['zone_id'] = '';
+		}
+
+		// Nova Poshta delivery: city/address_1 are the real fields collected
+		// here. The payment address step fills them with placeholders
+		// ('Нова Пошта' / 'Україна') when it copies itself into
+		// shipping_address - skip those so the form doesn't show junk.
+		$skip = array('Україна', 'Нова Пошта');
+
+		$session_city = isset($this->session->data['shipping_address']['city']) ? $this->session->data['shipping_address']['city'] : '';
+		$data['city'] = (!in_array($session_city, $skip)) ? $session_city : '';
+
+		$session_address_1 = isset($this->session->data['shipping_address']['address_1']) ? $this->session->data['shipping_address']['address_1'] : '';
+		$data['address_1'] = (!in_array($session_address_1, $skip)) ? $session_address_1 : '';
+
+		if (isset($this->session->data['payment_address']['firstname'])) {
+			$data['firstname'] = $this->session->data['payment_address']['firstname'];
+		} else {
+			$data['firstname'] = $this->customer->getFirstname();
+		}
+
+		if (isset($this->session->data['payment_address']['lastname'])) {
+			$data['lastname'] = $this->session->data['payment_address']['lastname'];
+		} else {
+			$data['lastname'] = $this->customer->getLastname();
+		}
+
+		$this->load->model('localisation/country');
+
+		$data['countries'] = $this->model_localisation_country->getCountries();
+
+		// Custom Fields
+		$data['custom_fields'] = array();
+
+		$this->load->model('account/custom_field');
+
+		$custom_fields = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
+
+		foreach ($custom_fields as $custom_field) {
+			if ($custom_field['location'] == 'address') {
+				$data['custom_fields'][] = $custom_field;
+			}
+		}
+
+		if (isset($this->session->data['shipping_address']['custom_field'])) {
+			$data['shipping_address_custom_field'] = $this->session->data['shipping_address']['custom_field'];
+		} else {
+			$data['shipping_address_custom_field'] = array();
+		}
+
+		$data['shipping_method_code'] = isset($this->session->data['shipping_method']['code'])
+			? $this->session->data['shipping_method']['code'] : '';
+
+		$this->response->setOutput($this->load->view('checkout/shipping_address', $data));
+	}
+
+	public function save() {
+		$this->load->language('checkout/checkout');
+
+		$json = array();
+
+		// Validate if customer is logged in.
+		if (!$this->customer->isLogged()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate if shipping is required. If not the customer should not have reached this page.
+		if (!$this->cart->hasShipping()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
+
+		// Validate minimum quantity requirements.
+		$products = $this->cart->getProducts();
+
+		foreach ($products as $product) {
+			$product_total = 0;
+
+			foreach ($products as $product_2) {
+				if ($product_2['product_id'] == $product['product_id']) {
+					$product_total += $product_2['quantity'];
+				}
+			}
+
+			if ($product['minimum'] > $product_total) {
+				$json['redirect'] = $this->url->link('checkout/cart');
+
+				break;
+			}
+		}
+
+		if (!$json) {
+			$this->load->model('account/address');
+
+			if (isset($this->request->post['shipping_address']) && $this->request->post['shipping_address'] == 'existing') {
+				if (empty($this->request->post['address_id'])) {
+					$json['error']['warning'] = $this->language->get('error_address');
+				} elseif (!in_array($this->request->post['address_id'], array_keys($this->model_account_address->getAddresses()))) {
+					$json['error']['warning'] = $this->language->get('error_address');
+				}
+
+				if (!$json) {
+					$this->session->data['shipping_address'] = $this->model_account_address->getAddress($this->request->post['address_id']);
+
+					unset($this->session->data['shipping_method']);
+					unset($this->session->data['shipping_methods']);
+				}
+			} else {
+				if (empty($this->request->post['firstname'])) {
+					$this->request->post['firstname'] = isset($this->session->data['payment_address']['firstname']) ? $this->session->data['payment_address']['firstname'] : '-';
+				}
+
+				if (empty($this->request->post['lastname'])) {
+					$this->request->post['lastname'] = isset($this->session->data['payment_address']['lastname']) ? $this->session->data['payment_address']['lastname'] : '-';
+				}
+
+				if (!isset($this->request->post['postcode'])) {
+					$this->request->post['postcode'] = '';
+				}
+
+				if ((utf8_strlen(trim($this->request->post['address_1'])) < 3) || (utf8_strlen(trim($this->request->post['address_1'])) > 128)) {
+					$json['error']['address_1'] = $this->language->get('error_address_1');
+				}
+
+				if ((utf8_strlen(trim($this->request->post['city'])) < 2) || (utf8_strlen(trim($this->request->post['city'])) > 128)) {
+					$json['error']['city'] = $this->language->get('error_city');
+				}
+
+				if ($this->request->post['country_id'] == '') {
+					$json['error']['country'] = $this->language->get('error_country');
+				}
+
+				if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '' || !is_numeric($this->request->post['zone_id'])) {
+					$json['error']['zone'] = $this->language->get('error_zone');
+				}
+
+				if (!$json) {
+					$address_id = $this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+
+					$this->session->data['shipping_address'] = $this->model_account_address->getAddress($address_id);
+
+					// If no default address ID set we use the last address
+					if (!$this->customer->getAddressId()) {
+						$this->load->model('account/customer');
+
+						$this->model_account_customer->editAddressId($this->customer->getId(), $address_id);
+					}
+
+					unset($this->session->data['shipping_method']);
+					unset($this->session->data['shipping_methods']);
+				}
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/checkout/guest_shipping.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCheckoutGuestShipping extends Controller \{
+	public function index\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['firstname'\]\)\) \{
+			\$data\['firstname'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['firstname'\];
+		\} else \{
+			\$data\['firstname'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['lastname'\]\)\) \{
+			\$data\['lastname'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['lastname'\];
+		\} else \{
+			\$data\['lastname'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['company'\]\)\) \{
+			\$data\['company'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['company'\];
+		\} else \{
+			\$data\['company'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['address_1'\]\)\) \{
+			\$data\['address_1'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['address_1'\];
+		\} else \{
+			\$data\['address_1'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['address_2'\]\)\) \{
+			\$data\['address_2'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['address_2'\];
+		\} else \{
+			\$data\['address_2'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['postcode'\]\)\) \{
+			\$data\['postcode'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['postcode'\];
+		\} else \{
+			\$data\['postcode'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['city'\]\)\) \{
+			\$data\['city'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['city'\];
+		\} else \{
+			\$data\['city'\] \= '';
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['country_id'\]\)\) \{
+			\$data\['country_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['country_id'\];
+		\} else \{
+			\$data\['country_id'\] \= \$this\-\>config\-\>get\('config_country_id'\);
+		\}
+
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\]\)\) \{
+			\$data\['zone_id'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\];
+		\} else \{
+			\$data\['zone_id'\] \= '';
+		\}
+
+		\$this\-\>load\-\>model\('localisation/country'\);
+
+		\$data\['countries'\] \= \$this\-\>model_localisation_country\-\>getCountries\(\);
+
+		// Custom Fields
+		\$this\-\>load\-\>model\('account/custom_field'\);
+		
+		\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$this\-\>session\-\>data\['guest'\]\['customer_group_id'\]\);
+
+		foreach \(\$custom_fields as \$custom_field\) \{
+			if \(\$custom_field\['location'\] \=\= 'address'\) \{
+				\$data\['custom_fields'\]\[\] \= \$custom_field;
+			\}
+		\}
+		
+		if \(isset\(\$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\]\)\) \{
+			\$data\['address_custom_field'\] \= \$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\];
+		\} else \{
+			\$data\['address_custom_field'\] \= array\(\);
+		\}
+		
+		\$this\-\>response\-\>setOutput\(\$this\-\>load\-\>view\('checkout/guest_shipping', \$data\)\);
+	\}
+
+	public function save\(\) \{
+		\$this\-\>load\-\>language\('checkout/checkout'\);
+
+		\$json \= array\(\);
+
+		// Validate if customer is logged in\.
+		if \(\$this\-\>customer\-\>isLogged\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		// Validate cart has products and has stock\.
+		if \(\(\!\$this\-\>cart\-\>hasProducts\(\) && empty\(\$this\-\>session\-\>data\['vouchers'\]\)\) \|\| \(\!\$this\-\>cart\-\>hasStock\(\) && \!\$this\-\>config\-\>get\('config_stock_checkout'\)\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+		\}
+
+		// Check if guest checkout is available\.
+		if \(\!\$this\-\>config\-\>get\('config_checkout_guest'\) \|\| \$this\-\>config\-\>get\('config_customer_price'\) \|\| \$this\-\>cart\-\>hasDownload\(\)\) \{
+			\$json\['redirect'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\}
+
+		if \(\!\$json\) \{
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['firstname'\]\)\) \> 32\)\) \{
+				\$json\['error'\]\['firstname'\] \= \$this\-\>language\-\>get\('error_firstname'\);
+			\}
+
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \< 1\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['lastname'\]\)\) \> 32\)\) \{
+				\$json\['error'\]\['lastname'\] \= \$this\-\>language\-\>get\('error_lastname'\);
+			\}
+
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \< 3\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['address_1'\]\)\) \> 128\)\) \{
+				\$json\['error'\]\['address_1'\] \= \$this\-\>language\-\>get\('error_address_1'\);
+			\}
+
+			if \(\(utf8_strlen\(trim\(\$this\-\>request\-\>post\['city'\]\)\) \< 2\) \|\| \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['city'\]\)\) \> 128\)\) \{
+				\$json\['error'\]\['city'\] \= \$this\-\>language\-\>get\('error_city'\);
+			\}
+
+			\$this\-\>load\-\>model\('localisation/country'\);
+
+			\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>post\['country_id'\]\);
+
+			if \(\$country_info && \$country_info\['postcode_required'\] && \(utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \< 2 \|\| utf8_strlen\(trim\(\$this\-\>request\-\>post\['postcode'\]\)\) \> 10\)\) \{
+				\$json\['error'\]\['postcode'\] \= \$this\-\>language\-\>get\('error_postcode'\);
+			\}
+
+			if \(\$this\-\>request\-\>post\['country_id'\] \=\= ''\) \{
+				\$json\['error'\]\['country'\] \= \$this\-\>language\-\>get\('error_country'\);
+			\}
+
+			if \(\!isset\(\$this\-\>request\-\>post\['zone_id'\]\) \|\| \$this\-\>request\-\>post\['zone_id'\] \=\= '' \|\| \!is_numeric\(\$this\-\>request\-\>post\['zone_id'\]\)\) \{
+				\$json\['error'\]\['zone'\] \= \$this\-\>language\-\>get\('error_zone'\);
+			\}
+
+			// Custom field validation
+			\$this\-\>load\-\>model\('account/custom_field'\);
+
+			\$custom_fields \= \$this\-\>model_account_custom_field\-\>getCustomFields\(\$this\-\>session\-\>data\['guest'\]\['customer_group_id'\]\);
+
+			foreach \(\$custom_fields as \$custom_field\) \{
+				if \(\$custom_field\['location'\] \=\= 'address'\) \{ 
+					if \(\$custom_field\['required'\] && empty\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\]\)\) \{
+						\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+					\} elseif \(\(\$custom_field\['type'\] \=\= 'text'\) && \!empty\(\$custom_field\['validation'\]\) && \!filter_var\(\$this\-\>request\-\>post\['custom_field'\]\[\$custom_field\['location'\]\]\[\$custom_field\['custom_field_id'\]\], FILTER_VALIDATE_REGEXP, array\('options' \=\> array\('regexp' \=\> \$custom_field\['validation'\]\)\)\)\) \{
+						\$json\['error'\]\['custom_field' \. \$custom_field\['custom_field_id'\]\] \= sprintf\(\$this\-\>language\-\>get\('error_custom_field'\), \$custom_field\['name'\]\);
+					\}
+				\}
+			\}
+		\}
+
+		if \(\!\$json\) \{
+			\$this\-\>session\-\>data\['shipping_address'\]\['firstname'\] \= \$this\-\>request\-\>post\['firstname'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['lastname'\] \= \$this\-\>request\-\>post\['lastname'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['company'\] \= \$this\-\>request\-\>post\['company'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['address_1'\] \= \$this\-\>request\-\>post\['address_1'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['address_2'\] \= \$this\-\>request\-\>post\['address_2'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['postcode'\] \= \$this\-\>request\-\>post\['postcode'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['city'\] \= \$this\-\>request\-\>post\['city'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['country_id'\] \= \$this\-\>request\-\>post\['country_id'\];
+			\$this\-\>session\-\>data\['shipping_address'\]\['zone_id'\] \= \$this\-\>request\-\>post\['zone_id'\];
+
+			\$this\-\>load\-\>model\('localisation/country'\);
+
+			\$country_info \= \$this\-\>model_localisation_country\-\>getCountry\(\$this\-\>request\-\>post\['country_id'\]\);
+
+			if \(\$country_info\) \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['country'\] \= \$country_info\['name'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_2'\] \= \$country_info\['iso_code_2'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_3'\] \= \$country_info\['iso_code_3'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['address_format'\] \= \$country_info\['address_format'\];
+			\} else \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['country'\] \= '';
+				\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_2'\] \= '';
+				\$this\-\>session\-\>data\['shipping_address'\]\['iso_code_3'\] \= '';
+				\$this\-\>session\-\>data\['shipping_address'\]\['address_format'\] \= '';
+			\}
+
+			\$this\-\>load\-\>model\('localisation/zone'\);
+
+			\$zone_info \= \$this\-\>model_localisation_zone\-\>getZone\(\$this\-\>request\-\>post\['zone_id'\]\);
+
+			if \(\$zone_info\) \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['zone'\] \= \$zone_info\['name'\];
+				\$this\-\>session\-\>data\['shipping_address'\]\['zone_code'\] \= \$zone_info\['code'\];
+			\} else \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['zone'\] \= '';
+				\$this\-\>session\-\>data\['shipping_address'\]\['zone_code'\] \= '';
+			\}
+
+			if \(isset\(\$this\-\>request\-\>post\['custom_field'\]\)\) \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\] \= \$this\-\>request\-\>post\['custom_field'\]\['address'\];
+			\} else \{
+				\$this\-\>session\-\>data\['shipping_address'\]\['custom_field'\] \= array\(\);
+			\}
+
+			unset\(\$this\-\>session\-\>data\['shipping_method'\]\);
+			unset\(\$this\-\>session\-\>data\['shipping_methods'\]\);
+		\}
+
+		\$this\-\>response\-\>addHeader\('Content\-Type\: application/json'\);
+		\$this\-\>response\-\>setOutput\(json_encode\(\$json\)\);
+	\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCheckoutGuestShipping extends Controller {
+	public function index() {
+		$this->load->language('checkout/checkout');
+
+		if (isset($this->session->data['shipping_address']['firstname'])) {
+			$data['firstname'] = $this->session->data['shipping_address']['firstname'];
+		} else {
+			$data['firstname'] = '';
+		}
+
+		if (isset($this->session->data['shipping_address']['lastname'])) {
+			$data['lastname'] = $this->session->data['shipping_address']['lastname'];
+		} else {
+			$data['lastname'] = '';
+		}
+
+		if (isset($this->session->data['shipping_address']['company'])) {
+			$data['company'] = $this->session->data['shipping_address']['company'];
+		} else {
+			$data['company'] = '';
+		}
+
+		if (isset($this->session->data['shipping_address']['address_2'])) {
+			$data['address_2'] = $this->session->data['shipping_address']['address_2'];
+		} else {
+			$data['address_2'] = '';
+		}
+
+		if (isset($this->session->data['shipping_address']['postcode'])) {
+			$data['postcode'] = $this->session->data['shipping_address']['postcode'];
+		} else {
+			$data['postcode'] = '';
+		}
+
+		// Nova Poshta delivery: city/address_1 are the real fields collected
+		// here. The guest contact step fills them with placeholders
+		// ('Нова Пошта' / 'Україна') when it copies itself into
+		// shipping_address - skip those so the form doesn't show junk.
+		$skip = array('Україна', 'Нова Пошта');
+
+		$session_city = isset($this->session->data['shipping_address']['city']) ? $this->session->data['shipping_address']['city'] : '';
+		$data['city'] = (!in_array($session_city, $skip)) ? $session_city : '';
+
+		$session_address_1 = isset($this->session->data['shipping_address']['address_1']) ? $this->session->data['shipping_address']['address_1'] : '';
+		$data['address_1'] = (!in_array($session_address_1, $skip)) ? $session_address_1 : '';
+
+		if (isset($this->session->data['shipping_address']['country_id'])) {
+			$data['country_id'] = $this->session->data['shipping_address']['country_id'];
+		} else {
+			$data['country_id'] = $this->config->get('config_country_id');
+		}
+
+		if (isset($this->session->data['shipping_address']['zone_id'])) {
+			$data['zone_id'] = $this->session->data['shipping_address']['zone_id'];
+		} else {
+			$data['zone_id'] = '';
+		}
+
+		$this->load->model('localisation/country');
+
+		$data['countries'] = $this->model_localisation_country->getCountries();
+
+		// Custom Fields
+		$this->load->model('account/custom_field');
+
+		$custom_fields = $this->model_account_custom_field->getCustomFields($this->session->data['guest']['customer_group_id']);
+
+		foreach ($custom_fields as $custom_field) {
+			if ($custom_field['location'] == 'address') {
+				$data['custom_fields'][] = $custom_field;
+			}
+		}
+
+		if (isset($this->session->data['shipping_address']['custom_field'])) {
+			$data['address_custom_field'] = $this->session->data['shipping_address']['custom_field'];
+		} else {
+			$data['address_custom_field'] = array();
+		}
+
+		$data['shipping_method_code'] = isset($this->session->data['shipping_method']['code'])
+			? $this->session->data['shipping_method']['code'] : '';
+
+		$this->response->setOutput($this->load->view('checkout/guest_shipping', $data));
+	}
+
+	public function save() {
+		$this->load->language('checkout/checkout');
+
+		$json = array();
+
+		// Validate if customer is logged in.
+		if ($this->customer->isLogged()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
+
+		// Check if guest checkout is available.
+		if (!$this->config->get('config_checkout_guest') || $this->config->get('config_customer_price') || $this->cart->hasDownload()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		if (empty($this->request->post['firstname'])) {
+			$this->request->post['firstname'] = isset($this->session->data['payment_address']['firstname']) ? $this->session->data['payment_address']['firstname'] : '-';
+		}
+
+		if (empty($this->request->post['lastname'])) {
+			$this->request->post['lastname'] = isset($this->session->data['payment_address']['lastname']) ? $this->session->data['payment_address']['lastname'] : '-';
+		}
+
+		if (!isset($this->request->post['postcode'])) {
+			$this->request->post['postcode'] = '';
+		}
+
+		if (!$json) {
+			if ((utf8_strlen(trim($this->request->post['address_1'])) < 3) || (utf8_strlen(trim($this->request->post['address_1'])) > 128)) {
+				$json['error']['address_1'] = $this->language->get('error_address_1');
+			}
+
+			if ((utf8_strlen(trim($this->request->post['city'])) < 2) || (utf8_strlen(trim($this->request->post['city'])) > 128)) {
+				$json['error']['city'] = $this->language->get('error_city');
+			}
+
+			if ($this->request->post['country_id'] == '') {
+				$json['error']['country'] = $this->language->get('error_country');
+			}
+
+			if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '' || !is_numeric($this->request->post['zone_id'])) {
+				$json['error']['zone'] = $this->language->get('error_zone');
+			}
+		}
+
+		if (!$json) {
+			$this->session->data['shipping_address']['firstname'] = $this->request->post['firstname'];
+			$this->session->data['shipping_address']['lastname'] = $this->request->post['lastname'];
+			$this->session->data['shipping_address']['company'] = $this->request->post['company'];
+			$this->session->data['shipping_address']['address_1'] = $this->request->post['address_1'];
+			$this->session->data['shipping_address']['address_2'] = $this->request->post['address_2'];
+			$this->session->data['shipping_address']['postcode'] = $this->request->post['postcode'];
+			$this->session->data['shipping_address']['city'] = $this->request->post['city'];
+			$this->session->data['shipping_address']['country_id'] = $this->request->post['country_id'];
+			$this->session->data['shipping_address']['zone_id'] = $this->request->post['zone_id'];
+
+			$this->load->model('localisation/country');
+
+			$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
+
+			if ($country_info) {
+				$this->session->data['shipping_address']['country'] = $country_info['name'];
+				$this->session->data['shipping_address']['iso_code_2'] = $country_info['iso_code_2'];
+				$this->session->data['shipping_address']['iso_code_3'] = $country_info['iso_code_3'];
+				$this->session->data['shipping_address']['address_format'] = $country_info['address_format'];
+			} else {
+				$this->session->data['shipping_address']['country'] = '';
+				$this->session->data['shipping_address']['iso_code_2'] = '';
+				$this->session->data['shipping_address']['iso_code_3'] = '';
+				$this->session->data['shipping_address']['address_format'] = '';
+			}
+
+			$this->load->model('localisation/zone');
+
+			$zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
+
+			if ($zone_info) {
+				$this->session->data['shipping_address']['zone'] = $zone_info['name'];
+				$this->session->data['shipping_address']['zone_code'] = $zone_info['code'];
+			} else {
+				$this->session->data['shipping_address']['zone'] = '';
+				$this->session->data['shipping_address']['zone_code'] = '';
+			}
+
+			if (isset($this->request->post['custom_field'])) {
+				$this->session->data['shipping_address']['custom_field'] = $this->request->post['custom_field']['address'];
+			} else {
+				$this->session->data['shipping_address']['custom_field'] = array();
+			}
+
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}]]></add>
+    </operation>
+  </file>
+</modification>

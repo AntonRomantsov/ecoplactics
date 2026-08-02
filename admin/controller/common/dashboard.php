@@ -80,8 +80,11 @@ class ControllerCommonDashboard extends Controller {
     			$data['rows'][] = $column;
 		}
 
-		// Security warning modal disabled on the dashboard for this environment
-		$data['security'] = '';
+		if (DIR_STORAGE == DIR_SYSTEM . 'storage/') {
+			$data['security'] = $this->load->controller('common/security');
+		} else {
+			$data['security'] = '';
+		}
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

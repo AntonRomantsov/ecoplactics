@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>Admin dashboard: disable storage-location security warning</name>
+  <code>ecoplastics_dashboard</code>
+  <author>ecoplastics</author>
+  <version>1.0.0</version>
+  <link>https://ecoplastics.telbot-test.space/</link>
+  <file path="admin/controller/common/dashboard.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)if \(DIR_STORAGE \=\= DIR_SYSTEM \. 'storage/'\) \{
+			\$data\['security'\] \= \$this\-\>load\-\>controller\('common/security'\);
+		\} else \{
+			\$data\['security'\] \= '';
+		\}~]]></search>
+      <add><![CDATA[$1// Security warning modal disabled on the dashboard for this environment.
+		$data['security'] = '';]]></add>
+    </operation>
+  </file>
+</modification>
