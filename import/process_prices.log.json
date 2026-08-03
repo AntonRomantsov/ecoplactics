@@ -1,0 +1,322 @@
+[
+    {
+        "article": "DW-10-UT",
+        "existing_price": 1237,
+        "new_price": 1546,
+        "old_price": 1701,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-15-UT",
+        "existing_price": 1546,
+        "new_price": 1932,
+        "old_price": 2125,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-20-UT",
+        "existing_price": 1789,
+        "new_price": 2236,
+        "old_price": 2460,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-25-UT",
+        "existing_price": 2142,
+        "new_price": 2677,
+        "old_price": 2945,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-30-UT",
+        "existing_price": 2318,
+        "new_price": 2898,
+        "old_price": 3188,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-35-UT",
+        "existing_price": 2567,
+        "new_price": 3209,
+        "old_price": 3530,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-40-UT",
+        "existing_price": 2870,
+        "new_price": 3588,
+        "old_price": 3947,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-45-UT",
+        "existing_price": 3158,
+        "new_price": 3947,
+        "old_price": 4342,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-50-UT",
+        "existing_price": 3577,
+        "new_price": 4471,
+        "old_price": 4918,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-60-UT",
+        "existing_price": 4107,
+        "new_price": 5134,
+        "old_price": 5647,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-70-UT",
+        "existing_price": 4770,
+        "new_price": 5962,
+        "old_price": 6558,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-80-UT",
+        "existing_price": 5421,
+        "new_price": 6776,
+        "old_price": 7454,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-90-UT",
+        "existing_price": 6017,
+        "new_price": 7521,
+        "old_price": 8273,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-100-UT",
+        "existing_price": 6576,
+        "new_price": 8280,
+        "old_price": 9108,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-120-UT",
+        "existing_price": 8114,
+        "new_price": 10143,
+        "old_price": 11157,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-140-UT",
+        "existing_price": 9439,
+        "new_price": 11799,
+        "old_price": 12979,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "DW-20W-12",
+        "existing_price": 11901,
+        "new_price": 2236,
+        "old_price": 2460,
+        "changed": true,
+        "matched_by": "article_fuzzy"
+    },
+    {
+        "article": 919010,
+        "existing_price": 2818,
+        "new_price": 19219,
+        "old_price": 21141,
+        "changed": true,
+        "matched_by": "article_fuzzy"
+    },
+    {
+        "article": "HC20-5",
+        "existing_price": 1238,
+        "new_price": 1548,
+        "old_price": 1703,
+        "changed": true,
+        "matched_by": "article_fuzzy"
+    },
+    {
+        "article": "HC20-10",
+        "existing_price": 1609,
+        "new_price": 2012,
+        "old_price": 2213,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-15",
+        "existing_price": 1814,
+        "new_price": 2269,
+        "old_price": 2496,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-20",
+        "existing_price": 2019,
+        "new_price": 2525,
+        "old_price": 2778,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-25",
+        "existing_price": 2139,
+        "new_price": 2675,
+        "old_price": 2943,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-30",
+        "existing_price": 2501,
+        "new_price": 3127,
+        "old_price": 3440,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-35",
+        "existing_price": 2778,
+        "new_price": 3472,
+        "old_price": 3819,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-40",
+        "existing_price": 3052,
+        "new_price": 3815,
+        "old_price": 4197,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-45",
+        "existing_price": 3326,
+        "new_price": 4158,
+        "old_price": 4574,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-50",
+        "existing_price": 3601,
+        "new_price": 4501,
+        "old_price": 4951,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-60",
+        "existing_price": 4080,
+        "new_price": 5100,
+        "old_price": 5610,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-70",
+        "existing_price": 4737,
+        "new_price": 5921,
+        "old_price": 6513,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-80",
+        "existing_price": 5246,
+        "new_price": 6559,
+        "old_price": 7215,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-90",
+        "existing_price": 5798,
+        "new_price": 7247,
+        "old_price": 7972,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-100",
+        "existing_price": 6284,
+        "new_price": 7855,
+        "old_price": 8641,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-110",
+        "existing_price": 7230,
+        "new_price": 9040,
+        "old_price": 9944,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-120",
+        "existing_price": 8386,
+        "new_price": 10483,
+        "old_price": 11531,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "HC20-150",
+        "existing_price": 10739,
+        "new_price": 13424,
+        "old_price": 14766,
+        "changed": true,
+        "matched_by": "article_norm"
+    },
+    {
+        "article": "diansr16",
+        "existing_price": 270,
+        "new_price": 265,
+        "old_price": 292,
+        "changed": true,
+        "matched_by": "name_fuzzy"
+    },
+    {
+        "article": "HTSR16",
+        "existing_price": 450,
+        "new_price": 274,
+        "old_price": 301,
+        "changed": true,
+        "matched_by": "name_fuzzy"
+    },
+    {
+        "article": "diansr30",
+        "existing_price": 270,
+        "new_price": 289,
+        "old_price": 318,
+        "changed": true,
+        "matched_by": "name_fuzzy"
+    },
+    {
+        "article": "diansr40",
+        "existing_price": 300,
+        "new_price": 321,
+        "old_price": 353,
+        "changed": true,
+        "matched_by": "name_fuzzy"
+    }
+]
