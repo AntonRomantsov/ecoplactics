@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact us</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #000;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 56px 80px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+
+    nav a {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+      text-decoration: none;
+    }
+
+    nav a {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 6px;
+      transition: box-shadow .3s ease;
+    }
+
+    nav a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+      transition: opacity .15s;
+    }
+
+    .btn:hover { opacity: 0.8; }
+
+    /* ── Main ── */
+    .main {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 80px 80px 55px;
+    }
+
+    /* ── Form side ── */
+    .form-side {
+      flex: 1 1 626px;
+      max-width: 626px;
+      min-width: 0;
+    }
+
+    .form-side h1 {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 77px;
+      letter-spacing: -0.02em;
+      color: #000;
+      margin-bottom: 24px;
+    }
+
+    .form-side .subtitle {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 150%;
+      color: #828282;
+      margin-bottom: 32px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex: 1;
+    }
+
+    .form-group label {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      font-family: inherit;
+      color: #000;
+      outline: none;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+      transition: border-color .15s;
+      background: #fff;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #828282;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #888;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 123px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 16px 32px;
+      font-size: 20px;
+      font-family: inherit;
+      font-weight: 500;
+      line-height: 150%;
+      cursor: pointer;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+      transition: opacity .15s;
+    }
+
+    .btn-submit:hover { opacity: 0.8; }
+
+    /* ── Image side ── */
+    .image-side {
+      flex: 0 0 508px;
+      width: 508px;
+    }
+
+    .image-side img {
+      width: 508px;
+      height: 657px;
+      display: block;
+      border-radius: 8px;
+      object-fit: cover;
+      transition: transform .4s ease;
+    }
+
+    .image-side img:hover {
+      transform: scale(1.04);
+    }
+
+    /* ── Hamburger ── */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: #111;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 164px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-12px);
+      transition: opacity .3s ease, transform .3s ease;
+    }
+
+    .mobile-nav.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .mobile-nav a {
+      width: 100%;
+      text-align: center;
+      padding: 8px 24px;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+      text-decoration: none;
+      transition: box-shadow .3s ease;
+    }
+
+    .mobile-nav a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav .btn {
+      margin-top: 57px;
+    }
+
+    /* ── Tablet / mobile (≤768px) ── */
+    @media (max-width: 768px) {
+      nav { display: none; }
+
+      .hamburger { display: block; }
+
+      .main {
+        flex-direction: column;
+        align-items: center;
+        padding: 18px 20px 40px;
+      }
+
+      .form-side {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .form-side h1,
+      .form-side .subtitle {
+        text-align: center;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .image-side {
+        order: -1;
+        flex: none;
+        width: 508px;
+        max-width: 100%;
+        margin: 0 auto 38px;
+      }
+
+      .image-side img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 508 / 657;
+      }
+
+      footer { padding: 48px 80px; }
+
+      .footer-col { text-align: left; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid #E6E6E6;
+      padding: 48px 80px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 88px;
+    }
+
+    .footer-logo {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 150%;
+      color: #000;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .social-icons a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      color: #828282;
+      transition: opacity .15s;
+    }
+
+    .social-icons a:hover { opacity: 0.5; }
+
+    .footer-links {
+      display: flex;
+      gap: 56px;
+    }
+
+    .footer-col {
+      text-align: right;
+    }
+
+    .footer-col a,
+    .footer-col span {
+      display: block;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #454545;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+
+    .footer-col .topic {
+      color: #000;
+      margin-bottom: 14px;
+    }
+
+    .footer-col a {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 0 4px;
+      transition: box-shadow .3s ease;
+    }
+
+    .footer-col a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="logo">Site name</a>
+    <nav>
+      <a href="index.html">Page</a>
+      <a href="contact.html">Page</a>
+      <a href="#">Page</a>
+      <button class="btn" onclick="location.href='index.html'">Button</button>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <svg id="icon-burger" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <svg id="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </header>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">Page</a>
+    <a href="contact.html">Page</a>
+    <a href="#">Page</a>
+    <button class="btn" onclick="location.href='index.html'">Button</button>
+  </div>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      var nav = document.getElementById('mobile-nav');
+      var burger = document.getElementById('icon-burger');
+      var close  = document.getElementById('icon-close');
+      var isOpen = nav.classList.toggle('open');
+      burger.style.display = isOpen ? 'none'  : 'block';
+      close.style.display  = isOpen ? 'block' : 'none';
+    });
+  </script>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="form-side">
+      <h1>Contact us</h1>
+      <p class="subtitle">Subheading for description or instructions</p>
+
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first-name">First name</label>
+            <input type="text" id="first-name" placeholder="Jane" />
+          </div>
+          <div class="form-group">
+            <label for="last-name">Last name</label>
+            <input type="text" id="last-name" placeholder="Smitherton" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="email@janesfakedomain.net" />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Number</label>
+          <input type="tel" id="phone" placeholder="+380-XX-XX-XX-XXX" />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Your message</label>
+          <textarea id="message" placeholder="Enter your question or message"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit</button>
+      </form>
+    </div>
+
+    <div class="image-side">
+      <img src="assets/contact.jpg" alt="Contact" />
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+
+      <div class="footer-left">
+        <div class="footer-logo">Site name</div>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="YouTube">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="topic">Topic</span>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+        </div>
+        <div class="footer-col">
+          <span class="topic">Topic</span>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+        </div>
+        <div class="footer-col">
+          <span class="topic">Topic</span>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>

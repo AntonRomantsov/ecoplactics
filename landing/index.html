@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landing page title</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #000;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 56px 80px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+
+    nav a {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+      text-decoration: none;
+    }
+
+    nav a {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 6px;
+      transition: box-shadow .3s ease;
+    }
+
+    nav a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+      transition: opacity .15s;
+    }
+
+    .btn:hover { opacity: 0.8; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      max-width: 837px;
+      margin: 0 auto;
+      padding: 110px 20px 0;
+    }
+
+    .hero h1 {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 77px;
+      letter-spacing: -0.02em;
+      color: #000;
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 150%;
+      color: #828282;
+      margin-bottom: 24px;
+    }
+
+    /* ── Testimonials ── */
+    .testimonials {
+      padding: 120px 80px 120px;
+    }
+
+    .testimonials h2 {
+      font-size: 40px;
+      font-weight: 600;
+      line-height: 110%;
+      color: #000;
+      max-width: 733px;
+      margin-bottom: 8px;
+    }
+
+    .testimonials-sub {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 150%;
+      color: #828282;
+      max-width: 625px;
+      margin-bottom: 32px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .card {
+      box-sizing: border-box;
+      border: 1px solid #F7F7F7;
+      border-radius: 12px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 48px;
+      box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .quote {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #D9D9D9;
+      flex-shrink: 0;
+    }
+
+    .author-name {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+    }
+
+    .author-desc {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #828282;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid #E6E6E6;
+      padding: 48px 80px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 88px;
+    }
+
+    .footer-logo {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 150%;
+      color: #000;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .social-icons a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      color: #828282;
+      transition: opacity .15s;
+    }
+
+    .social-icons a:hover { opacity: 0.5; }
+
+    .footer-links {
+      display: flex;
+      gap: 56px;
+    }
+
+    .footer-col {
+      text-align: right;
+    }
+
+    .footer-col a,
+    .footer-col span {
+      display: block;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #454545;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+
+    .footer-col .topic {
+      color: #000;
+      margin-bottom: 14px;
+    }
+
+    .footer-col a {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 0 4px;
+      transition: box-shadow .3s ease;
+    }
+
+    .footer-col a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* ── Image ── */
+    .hero-image {
+      width: 88.88%;
+      margin: 114px auto 0;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 640px;
+      object-fit: cover;
+      display: block;
+      border-radius: 8px;
+      transition: transform .4s ease;
+    }
+
+    .hero-image img:hover {
+      transform: scale(1.03);
+    }
+
+    /* ── Hamburger ── */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: #111;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 164px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-12px);
+      transition: opacity .3s ease, transform .3s ease;
+    }
+
+    .mobile-nav.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .mobile-nav a {
+      width: 100%;
+      text-align: center;
+      padding: 8px 24px;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 150%;
+      color: #000;
+      text-decoration: none;
+      transition: box-shadow .3s ease;
+    }
+
+    .mobile-nav a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav .btn {
+      margin-top: 57px;
+    }
+
+    /* ── Tablet / mobile (≤768px) ── */
+    @media (max-width: 768px) {
+      nav { display: none; }
+
+      .hamburger { display: block; }
+
+      .hero { padding: 12px 20px 0; }
+
+      .hero-image {
+        margin-top: 57px;
+      }
+
+      .testimonials { padding: 87px 80px 125px; }
+
+      .cards {
+        grid-template-columns: 1fr;
+        max-width: 578px;
+        margin: 0 auto;
+        gap: 32px;
+      }
+
+      footer { padding: 48px 80px; }
+
+      .footer-col { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Site name</a>
+    <nav>
+      <a href="index.html">Page</a>
+      <a href="contact.html">Page</a>
+      <a href="#">Page</a>
+      <button class="btn" onclick="location.href='contact.html'">Send form</button>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <svg id="icon-burger" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <svg id="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </header>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">Page</a>
+    <a href="contact.html">Page</a>
+    <a href="#">Page</a>
+    <button class="btn" onclick="location.href='contact.html'">Send form</button>
+  </div>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      var nav = document.getElementById('mobile-nav');
+      var burger = document.getElementById('icon-burger');
+      var close  = document.getElementById('icon-close');
+      var isOpen = nav.classList.toggle('open');
+      burger.style.display = isOpen ? 'none'  : 'block';
+      close.style.display  = isOpen ? 'block' : 'none';
+    });
+  </script>
+
+  <section class="hero">
+    <h1>Landing page title</h1>
+    <p>And a subheading describing your site, too</p>
+    <button class="btn">Send form</button>
+  </section>
+
+  <div class="hero-image">
+    <img src="assets/hero.jpg" alt="Hero" />
+  </div>
+
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <h2>Heading</h2>
+    <p class="testimonials-sub">Subheading to introduce testimonials</p>
+    <div class="cards">
+
+      <div class="card">
+        <p class="quote">"A terrific piece of praise"</p>
+        <div class="author">
+          <img class="avatar" src="https://i.pravatar.cc/40?img=1" alt="avatar" />
+          <div>
+            <div class="author-name">Name</div>
+            <div class="author-desc">Description</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="quote">"A fantastic bit of feedback"</p>
+        <div class="author">
+          <img class="avatar" src="https://i.pravatar.cc/40?img=2" alt="avatar" />
+          <div>
+            <div class="author-name">Name</div>
+            <div class="author-desc">Description</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="quote">"A genuinely glowing review"</p>
+        <div class="author">
+          <img class="avatar" src="https://i.pravatar.cc/40?img=3" alt="avatar" />
+          <div>
+            <div class="author-name">Name</div>
+            <div class="author-desc">Description</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+
+      <div class="footer-left">
+        <div class="footer-logo">Site name</div>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="YouTube">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="topic">Topic</span>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+        </div>
+        <div class="footer-col">
+          <span class="topic">Topic</span>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+        </div>
+        <div class="footer-col">
+          <span class="topic">Topic</span>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+          <a href="#">Page</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>
