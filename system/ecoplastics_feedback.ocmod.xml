@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>Header: 'Зворотній зв'язок' feedback modal (Level 3, part 1)</name>
+  <code>ecoplastics_feedback</code>
+  <author>ecoplastics</author>
+  <version>1.0.0</version>
+  <link>https://ecoplastics.telbot-test.space/</link>
+  <file path="catalog/controller/common/header.php">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\?php
+// \*	@source		See SOURCE\.txt for source and other copyright\.
+// \*	@license	GNU General Public License version 3; see LICENSE\.txt
+
+class ControllerCommonHeader extends Controller \{
+	public function index\(\) \{
+		// Analytics
+		\$this\-\>load\-\>model\('setting/extension'\);
+
+		\$data\['analytics'\] \= array\(\);
+
+		\$analytics \= \$this\-\>model_setting_extension\-\>getExtensions\('analytics'\);
+
+		foreach \(\$analytics as \$analytic\) \{
+			if \(\$this\-\>config\-\>get\('analytics_' \. \$analytic\['code'\] \. '_status'\)\) \{
+				\$data\['analytics'\]\[\] \= \$this\-\>load\-\>controller\('extension/analytics/' \. \$analytic\['code'\], \$this\-\>config\-\>get\('analytics_' \. \$analytic\['code'\] \. '_status'\)\);
+			\}
+		\}
+
+		if \(\$this\-\>request\-\>server\['HTTPS'\]\) \{
+			\$server \= \$this\-\>config\-\>get\('config_ssl'\);
+		\} else \{
+			\$server \= \$this\-\>config\-\>get\('config_url'\);
+		\}
+
+		if \(is_file\(DIR_IMAGE \. \$this\-\>config\-\>get\('config_icon'\)\)\) \{
+			\$this\-\>document\-\>addLink\(\$server \. 'image/' \. \$this\-\>config\-\>get\('config_icon'\), 'icon'\);
+		\}
+
+		\$data\['title'\] \= \$this\-\>document\-\>getTitle\(\);
+
+		\$data\['base'\] \= \$server;
+		\$data\['description'\] \= \$this\-\>document\-\>getDescription\(\);
+		\$data\['keywords'\] \= \$this\-\>document\-\>getKeywords\(\);
+		\$data\['links'\] \= \$this\-\>document\-\>getLinks\(\);
+		\$data\['robots'\] \= \$this\-\>document\-\>getRobots\(\);
+		\$data\['styles'\] \= \$this\-\>document\-\>getStyles\(\);
+		\$data\['scripts'\] \= \$this\-\>document\-\>getScripts\('header'\);
+		\$data\['lang'\] \= \$this\-\>language\-\>get\('code'\);
+		\$data\['direction'\] \= \$this\-\>language\-\>get\('direction'\);
+
+		\$data\['name'\] \= \$this\-\>config\-\>get\('config_name'\);
+
+		if \(is_file\(DIR_IMAGE \. \$this\-\>config\-\>get\('config_logo'\)\)\) \{
+			\$data\['logo'\] \= \$server \. 'image/' \. \$this\-\>config\-\>get\('config_logo'\);
+		\} else \{
+			\$data\['logo'\] \= '';
+		\}
+
+		\$this\-\>load\-\>language\('common/header'\);
+		
+		
+		\$host \= isset\(\$this\-\>request\-\>server\['HTTPS'\]\) && \(\(\$this\-\>request\-\>server\['HTTPS'\] \=\= 'on'\) \|\| \(\$this\-\>request\-\>server\['HTTPS'\] \=\= '1'\)\) \? HTTPS_SERVER \: HTTP_SERVER;
+		if \(\$this\-\>request\-\>server\['REQUEST_URI'\] \=\= '/'\) \{
+			\$data\['og_url'\] \= \$this\-\>url\-\>link\('common/home'\);
+		\} else \{
+			\$data\['og_url'\] \= \$host \. substr\(\$this\-\>request\-\>server\['REQUEST_URI'\], 1, \(strlen\(\$this\-\>request\-\>server\['REQUEST_URI'\]\)\-1\)\);
+		\}
+		
+		\$data\['og_image'\] \= \$this\-\>document\-\>getOgImage\(\);
+		
+
+
+		// Wishlist
+		if \(\$this\-\>customer\-\>isLogged\(\)\) \{
+			\$this\-\>load\-\>model\('account/wishlist'\);
+
+			\$data\['text_wishlist'\] \= sprintf\(\$this\-\>language\-\>get\('text_wishlist'\), \$this\-\>model_account_wishlist\-\>getTotalWishlist\(\)\);
+		\} else \{
+			\$data\['text_wishlist'\] \= sprintf\(\$this\-\>language\-\>get\('text_wishlist'\), \(isset\(\$this\-\>session\-\>data\['wishlist'\]\) \? count\(\$this\-\>session\-\>data\['wishlist'\]\) \: 0\)\);
+		\}
+
+		\$data\['text_logged'\] \= sprintf\(\$this\-\>language\-\>get\('text_logged'\), \$this\-\>url\-\>link\('account/account', '', true\), \$this\-\>customer\-\>getFirstName\(\), \$this\-\>url\-\>link\('account/logout', '', true\)\);
+		
+		\$data\['home'\] \= \$this\-\>url\-\>link\('common/home'\);
+		\$data\['wishlist'\] \= \$this\-\>url\-\>link\('account/wishlist', '', true\);
+		\$data\['logged'\] \= \$this\-\>customer\-\>isLogged\(\);
+		\$data\['account'\] \= \$this\-\>url\-\>link\('account/account', '', true\);
+		\$data\['register'\] \= \$this\-\>url\-\>link\('account/register', '', true\);
+		\$data\['login'\] \= \$this\-\>url\-\>link\('account/login', '', true\);
+		\$data\['order'\] \= \$this\-\>url\-\>link\('account/order', '', true\);
+		\$data\['transaction'\] \= \$this\-\>url\-\>link\('account/transaction', '', true\);
+		\$data\['download'\] \= \$this\-\>url\-\>link\('account/download', '', true\);
+		\$data\['logout'\] \= \$this\-\>url\-\>link\('account/logout', '', true\);
+		\$data\['shopping_cart'\] \= \$this\-\>url\-\>link\('checkout/cart'\);
+		\$data\['checkout'\] \= \$this\-\>url\-\>link\('checkout/checkout', '', true\);
+		\$data\['contact'\] \= \$this\-\>url\-\>link\('information/contact'\);
+		\$data\['telephone'\] \= \$this\-\>config\-\>get\('config_telephone'\);
+		
+		\$data\['language'\] \= \$this\-\>load\-\>controller\('common/language'\);
+		\$data\['currency'\] \= \$this\-\>load\-\>controller\('common/currency'\);
+		\$data\['currency'\] \= \$this\-\>load\-\>controller\('common/currency'\);
+		if \(\$this\-\>config\-\>get\('configblog_blog_menu'\)\) \{
+			\$data\['blog_menu'\] \= \$this\-\>load\-\>controller\('blog/menu'\);
+		\} else \{
+			\$data\['blog_menu'\] \= '';
+		\}
+		\$data\['search'\] \= \$this\-\>load\-\>controller\('common/search'\);
+		\$data\['cart'\] \= \$this\-\>load\-\>controller\('common/cart'\);
+		\$data\['menu'\] \= \$this\-\>load\-\>controller\('common/menu'\);
+
+		return \$this\-\>load\-\>view\('common/header', \$data\);
+	\}
+\}~]]></search>
+      <add><![CDATA[$1<?php
+// *	@source		See SOURCE.txt for source and other copyright.
+// *	@license	GNU General Public License version 3; see LICENSE.txt
+
+class ControllerCommonHeader extends Controller {
+	public function index() {
+		// Analytics
+		$this->load->model('setting/extension');
+
+		$data['analytics'] = array();
+
+		$analytics = $this->model_setting_extension->getExtensions('analytics');
+
+		foreach ($analytics as $analytic) {
+			if ($this->config->get('analytics_' . $analytic['code'] . '_status')) {
+				$data['analytics'][] = $this->load->controller('extension/analytics/' . $analytic['code'], $this->config->get('analytics_' . $analytic['code'] . '_status'));
+			}
+		}
+
+		if ($this->request->server['HTTPS']) {
+			$server = $this->config->get('config_ssl');
+		} else {
+			$server = $this->config->get('config_url');
+		}
+
+		if (is_file(DIR_IMAGE . $this->config->get('config_icon'))) {
+			$this->document->addLink($server . 'image/' . $this->config->get('config_icon'), 'icon');
+		}
+
+		$data['title'] = $this->document->getTitle();
+
+		$data['base'] = $server;
+		$data['description'] = $this->document->getDescription();
+		$data['keywords'] = $this->document->getKeywords();
+		$data['links'] = $this->document->getLinks();
+		$data['robots'] = $this->document->getRobots();
+		$data['styles'] = $this->document->getStyles();
+		$data['scripts'] = $this->document->getScripts('header');
+		$data['lang'] = $this->language->get('code');
+		$data['direction'] = $this->language->get('direction');
+
+		$data['name'] = $this->config->get('config_name');
+
+		if (is_file(DIR_IMAGE . $this->config->get('config_logo'))) {
+			$data['logo'] = $server . 'image/' . $this->config->get('config_logo');
+		} else {
+			$data['logo'] = '';
+		}
+
+		$this->load->language('common/header');
+		$this->load->language('common/feedback');
+
+
+		$host = isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1')) ? HTTPS_SERVER : HTTP_SERVER;
+		if ($this->request->server['REQUEST_URI'] == '/') {
+			$data['og_url'] = $this->url->link('common/home');
+		} else {
+			$data['og_url'] = $host . substr($this->request->server['REQUEST_URI'], 1, (strlen($this->request->server['REQUEST_URI'])-1));
+		}
+
+		$data['og_image'] = $this->document->getOgImage();
+
+
+
+		// Wishlist
+		if ($this->customer->isLogged()) {
+			$this->load->model('account/wishlist');
+
+			$data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), $this->model_account_wishlist->getTotalWishlist());
+		} else {
+			$data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), (isset($this->session->data['wishlist']) ? count($this->session->data['wishlist']) : 0));
+		}
+
+		$data['text_logged'] = sprintf($this->language->get('text_logged'), $this->url->link('account/account', '', true), $this->customer->getFirstName(), $this->url->link('account/logout', '', true));
+
+		$data['home'] = $this->url->link('common/home');
+		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
+		$data['logged'] = $this->customer->isLogged();
+		$data['account'] = $this->url->link('account/account', '', true);
+		$data['register'] = $this->url->link('account/register', '', true);
+		$data['login'] = $this->url->link('account/login', '', true);
+		$data['order'] = $this->url->link('account/order', '', true);
+		$data['transaction'] = $this->url->link('account/transaction', '', true);
+		$data['download'] = $this->url->link('account/download', '', true);
+		$data['logout'] = $this->url->link('account/logout', '', true);
+		$data['shopping_cart'] = $this->url->link('checkout/cart');
+		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
+		$data['contact'] = $this->url->link('information/contact');
+		$data['telephone'] = $this->config->get('config_telephone');
+
+		$data['language'] = $this->load->controller('common/language');
+		$data['currency'] = $this->load->controller('common/currency');
+		$data['currency'] = $this->load->controller('common/currency');
+		if ($this->config->get('configblog_blog_menu')) {
+			$data['blog_menu'] = $this->load->controller('blog/menu');
+		} else {
+			$data['blog_menu'] = '';
+		}
+		$data['search'] = $this->load->controller('common/search');
+		$data['cart'] = $this->load->controller('common/cart');
+		$data['menu'] = $this->load->controller('common/menu');
+
+		return $this->load->view('common/header', $data);
+	}
+}]]></add>
+    </operation>
+  </file>
+  <file path="catalog/view/theme/default/template/common/header.twig">
+    <operation>
+      <search regex="true"><![CDATA[~([ \t]*)\<\!DOCTYPE html\>
+\<\!\-\-\[if IE\]\>\<\!\[endif\]\-\-\>
+\<\!\-\-\[if IE 8 \]\>\<html dir\="\{\{ direction \}\}" lang\="\{\{ lang \}\}" class\="ie8"\>\<\!\[endif\]\-\-\>
+\<\!\-\-\[if IE 9 \]\>\<html dir\="\{\{ direction \}\}" lang\="\{\{ lang \}\}" class\="ie9"\>\<\!\[endif\]\-\-\>
+\<\!\-\-\[if \(gt IE 9\)\|\!\(IE\)\]\>\<\!\-\-\>
+\<html dir\="\{\{ direction \}\}" lang\="\{\{ lang \}\}"\>
+\<\!\-\-\<\!\[endif\]\-\-\>
+\<head\>
+\<meta charset\="UTF\-8" /\>
+\<meta name\="viewport" content\="width\=device\-width, initial\-scale\=1"\>
+\<meta http\-equiv\="X\-UA\-Compatible" content\="IE\=edge"\>
+\<title\>\{\{ title \}\}\</title\>
+\{% if robots %\}
+\<meta name\="robots" content\="\{\{ robots \}\}" /\>
+\{% endif %\}
+\<base href\="\{\{ base \}\}" /\>
+\{% if description %\}
+\<meta name\="description" content\="\{\{ description \}\}" /\>
+\{% endif %\}
+\{% if keywords %\}
+\<meta name\="keywords" content\="\{\{ keywords \}\}" /\>
+\{% endif %\}
+\<meta property\="og\:title" content\="\{\{ title \}\}" /\>
+\<meta property\="og\:type" content\="website" /\>
+\<meta property\="og\:url" content\="\{\{ og_url \}\}" /\>
+\{% if og_image %\}
+\<meta property\="og\:image" content\="\{\{ og_image \}\}" /\>
+\{% else %\}
+\<meta property\="og\:image" content\="\{\{ logo \}\}" /\>
+\{% endif %\}
+\<meta property\="og\:site_name" content\="\{\{ name \}\}" /\>
+\<script src\="catalog/view/javascript/jquery/jquery\-2\.1\.1\.min\.js" type\="text/javascript"\>\</script\>
+\<link href\="catalog/view/javascript/bootstrap/css/bootstrap\.min\.css" rel\="stylesheet" media\="screen" /\>
+\<script src\="catalog/view/javascript/bootstrap/js/bootstrap\.min\.js" type\="text/javascript"\>\</script\>
+\<link href\="catalog/view/javascript/font\-awesome/css/font\-awesome\.min\.css" rel\="stylesheet" type\="text/css" /\>
+\<link href\="//fonts\.googleapis\.com/css\?family\=Open\+Sans\:400,400i,300,700" rel\="stylesheet" type\="text/css" /\>
+\<link href\="catalog/view/theme/default/stylesheet/stylesheet\.css" rel\="stylesheet"\>
+\{% for style in styles %\}
+\<link href\="\{\{ style\.href \}\}" type\="text/css" rel\="\{\{ style\.rel \}\}" media\="\{\{ style\.media \}\}" /\>
+\{% endfor %\}
+\{% for script in scripts %\}
+\<script src\="\{\{ script \}\}" type\="text/javascript"\>\</script\>
+\{% endfor %\}
+\<script src\="catalog/view/javascript/common\.js" type\="text/javascript"\>\</script\>
+\{% for link in links %\}
+\<link href\="\{\{ link\.href \}\}" rel\="\{\{ link\.rel \}\}" /\>
+\{% endfor %\}
+\{% for analytic in analytics %\}
+\{\{ analytic \}\}
+\{% endfor %\}
+\</head\>
+\<body\>
+\<nav id\="top"\>
+  \<div class\="container"\>\{\{ currency \}\}
+    \{\{ language \}\}
+	\{\{ blog_menu \}\}
+    \<div id\="top\-links" class\="nav pull\-right"\>
+      \<ul class\="list\-inline"\>
+        \<li\>\<a href\="\{\{ contact \}\}"\>\<i class\="fa fa\-phone"\>\</i\>\</a\> \<span class\="hidden\-xs hidden\-sm hidden\-md"\>\{\{ telephone \}\}\</span\>\</li\>
+        \<li class\="dropdown"\>\<a href\="\{\{ account \}\}" title\="\{\{ text_account \}\}" class\="dropdown\-toggle" data\-toggle\="dropdown"\>\<i class\="fa fa\-user"\>\</i\> \<span class\="hidden\-xs hidden\-sm hidden\-md"\>\{\{ text_account \}\}\</span\> \<span class\="caret"\>\</span\>\</a\>
+          \<ul class\="dropdown\-menu dropdown\-menu\-right"\>
+            \{% if logged %\}
+            \<li\>\<a href\="\{\{ account \}\}"\>\{\{ text_account \}\}\</a\>\</li\>
+            \<li\>\<a href\="\{\{ order \}\}"\>\{\{ text_order \}\}\</a\>\</li\>
+            \<li\>\<a href\="\{\{ transaction \}\}"\>\{\{ text_transaction \}\}\</a\>\</li\>
+            \<li\>\<a href\="\{\{ download \}\}"\>\{\{ text_download \}\}\</a\>\</li\>
+            \<li\>\<a href\="\{\{ logout \}\}"\>\{\{ text_logout \}\}\</a\>\</li\>
+            \{% else %\}
+            \<li\>\<a href\="\{\{ register \}\}"\>\{\{ text_register \}\}\</a\>\</li\>
+            \<li\>\<a href\="\{\{ login \}\}"\>\{\{ text_login \}\}\</a\>\</li\>
+            \{% endif %\}
+          \</ul\>
+        \</li\>
+        \<li\>\<a href\="\{\{ wishlist \}\}" id\="wishlist\-total" title\="\{\{ text_wishlist \}\}"\>\<i class\="fa fa\-heart"\>\</i\> \<span class\="hidden\-xs hidden\-sm hidden\-md"\>\{\{ text_wishlist \}\}\</span\>\</a\>\</li\>
+        \<li\>\<a href\="\{\{ shopping_cart \}\}" title\="\{\{ text_shopping_cart \}\}"\>\<i class\="fa fa\-shopping\-cart"\>\</i\> \<span class\="hidden\-xs hidden\-sm hidden\-md"\>\{\{ text_shopping_cart \}\}\</span\>\</a\>\</li\>
+        \<li\>\<a href\="\{\{ checkout \}\}" title\="\{\{ text_checkout \}\}"\>\<i class\="fa fa\-share"\>\</i\> \<span class\="hidden\-xs hidden\-sm hidden\-md"\>\{\{ text_checkout \}\}\</span\>\</a\>\</li\>
+      \</ul\>
+    \</div\>
+  \</div\>
+\</nav\>
+\<header\>
+  \<div class\="container"\>
+    \<div class\="row"\>
+      \<div class\="col\-sm\-4"\>
+		\<div id\="logo"\>
+          \{% if logo %\}
+            \{% if home \=\= og_url %\}
+              \<img src\="\{\{ logo \}\}" title\="\{\{ name \}\}" alt\="\{\{ name \}\}" class\="img\-responsive" /\>
+            \{% else %\}
+              \<a href\="\{\{ home \}\}"\>\<img src\="\{\{ logo \}\}" title\="\{\{ name \}\}" alt\="\{\{ name \}\}" class\="img\-responsive" /\>\</a\>
+            \{% endif %\}
+          \{% else %\}
+            \<h1\>\<a href\="\{\{ home \}\}"\>\{\{ name \}\}\</a\>\</h1\>
+          \{% endif %\}
+		\</div\>
+      \</div\>
+      \<div class\="col\-sm\-5"\>\{\{ search \}\}\</div\>
+      \<div class\="col\-sm\-3"\>\{\{ cart \}\}\</div\>
+    \</div\>
+  \</div\>
+\</header\>
+\{\{ menu \}\}~]]></search>
+      <add><![CDATA[$1<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<!--[if IE 8 ]><html dir="{{ direction }}" lang="{{ lang }}" class="ie8"><![endif]-->
+<!--[if IE 9 ]><html dir="{{ direction }}" lang="{{ lang }}" class="ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html dir="{{ direction }}" lang="{{ lang }}">
+<!--<![endif]-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>{{ title }}</title>
+{% if robots %}
+<meta name="robots" content="{{ robots }}" />
+{% endif %}
+<base href="{{ base }}" />
+{% if description %}
+<meta name="description" content="{{ description }}" />
+{% endif %}
+{% if keywords %}
+<meta name="keywords" content="{{ keywords }}" />
+{% endif %}
+<meta property="og:title" content="{{ title }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ og_url }}" />
+{% if og_image %}
+<meta property="og:image" content="{{ og_image }}" />
+{% else %}
+<meta property="og:image" content="{{ logo }}" />
+{% endif %}
+<meta property="og:site_name" content="{{ name }}" />
+<script src="catalog/view/javascript/jquery/jquery-2.1.1.min.js" type="text/javascript"></script>
+<link href="catalog/view/javascript/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen" />
+<script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<link href="catalog/view/javascript/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Open+Sans:400,400i,300,700" rel="stylesheet" type="text/css" />
+<link href="catalog/view/theme/default/stylesheet/stylesheet.css" rel="stylesheet">
+{% for style in styles %}
+<link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}" />
+{% endfor %}
+{% for script in scripts %}
+<script src="{{ script }}" type="text/javascript"></script>
+{% endfor %}
+<script src="catalog/view/javascript/common.js" type="text/javascript"></script>
+{% for link in links %}
+<link href="{{ link.href }}" rel="{{ link.rel }}" />
+{% endfor %}
+{% for analytic in analytics %}
+{{ analytic }}
+{% endfor %}
+</head>
+<body>
+<nav id="top">
+  <div class="container">{{ currency }}
+    {{ language }}
+	{{ blog_menu }}
+    <div id="top-links" class="nav pull-right">
+      <ul class="list-inline">
+        <li><a href="{{ contact }}"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md">{{ telephone }}</span></li>
+        <li><a href="#" data-toggle="modal" data-target="#modal-feedback" title="{{ text_link }}"><i class="fa fa-envelope-o"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_link }}</span></a></li>
+        <li class="dropdown"><a href="{{ account }}" title="{{ text_account }}" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_account }}</span> <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-menu-right">
+            {% if logged %}
+            <li><a href="{{ account }}">{{ text_account }}</a></li>
+            <li><a href="{{ order }}">{{ text_order }}</a></li>
+            <li><a href="{{ transaction }}">{{ text_transaction }}</a></li>
+            <li><a href="{{ download }}">{{ text_download }}</a></li>
+            <li><a href="{{ logout }}">{{ text_logout }}</a></li>
+            {% else %}
+            <li><a href="{{ register }}">{{ text_register }}</a></li>
+            <li><a href="{{ login }}">{{ text_login }}</a></li>
+            {% endif %}
+          </ul>
+        </li>
+        <li><a href="{{ wishlist }}" id="wishlist-total" title="{{ text_wishlist }}"><i class="fa fa-heart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_wishlist }}</span></a></li>
+        <li><a href="{{ shopping_cart }}" title="{{ text_shopping_cart }}"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_shopping_cart }}</span></a></li>
+        <li><a href="{{ checkout }}" title="{{ text_checkout }}"><i class="fa fa-share"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_checkout }}</span></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+		<div id="logo">
+          {% if logo %}
+            {% if home == og_url %}
+              <img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" />
+            {% else %}
+              <a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" /></a>
+            {% endif %}
+          {% else %}
+            <h1><a href="{{ home }}">{{ name }}</a></h1>
+          {% endif %}
+		</div>
+      </div>
+      <div class="col-sm-5">{{ search }}</div>
+      <div class="col-sm-3">{{ cart }}</div>
+    </div>
+  </div>
+</header>
+{{ menu }}
+
+<div class="modal fade" id="modal-feedback" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ heading_title }}</h4>
+      </div>
+      <div class="modal-body">
+        <div id="feedback-alert"></div>
+        <form id="form-feedback" class="form-horizontal">
+          <div class="form-group required" style="margin-left:10%; margin-right:10%;">
+            <label class="control-label" for="input-feedback-name">{{ entry_name }}</label>
+            <input type="text" name="name" id="input-feedback-name" class="form-control" placeholder="{{ entry_name }}" maxlength="64" />
+            <div class="text-danger" id="error-feedback-name"></div>
+          </div>
+          <div class="form-group required" style="margin-left:10%; margin-right:10%;">
+            <label class="control-label" for="input-feedback-telephone">{{ entry_telephone }}</label>
+            <input type="tel" name="telephone" id="input-feedback-telephone" class="form-control" placeholder="+38 (0__) ___-__-__" />
+            <div class="text-danger" id="error-feedback-telephone"></div>
+          </div>
+          <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+            <label for="input-feedback-website">Website</label>
+            <input type="text" name="website" id="input-feedback-website" tabindex="-1" autocomplete="off" />
+          </div>
+          <input type="hidden" name="token" id="input-feedback-token" value="" />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ button_cancel }}</button>
+        <button type="button" id="button-feedback-submit" class="btn btn-primary" data-loading-text="{{ text_loading }}">{{ button_submit }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+(function() {
+	var modal = $('#modal-feedback');
+
+	modal.on('show.bs.modal', function() {
+		$('#form-feedback')[0].reset();
+		$('#feedback-alert').empty();
+		modal.find('.text-danger').empty();
+		modal.find('.form-group').removeClass('has-error');
+
+		// Issue a fresh one-time token for this submission (server tracks
+		// the issue time - a submit arriving too soon after is rejected as
+		// spam, same anti-spam approach used for this modal previously).
+		$.ajax({
+			url: 'index.php?route=common/feedback/token',
+			dataType: 'json',
+			success: function(json) {
+				$('#input-feedback-token').val(json['token']);
+			}
+		});
+	});
+
+	// Format-as-you-type mask for Ukrainian mobile numbers: +38 (0XX) XXX-XX-XX
+	$('#input-feedback-telephone').on('input', function() {
+		var digits = this.value.replace(/\D/g, '');
+
+		if (digits.substr(0, 3) === '380') {
+			digits = digits.substr(3);
+		} else if (digits.substr(0, 2) === '38') {
+			digits = digits.substr(2);
+		} else if (digits.charAt(0) === '0') {
+			digits = digits.substr(1);
+		}
+
+		digits = digits.substr(0, 9);
+
+		var formatted = '+38 (0';
+		if (digits.length > 0) { formatted += digits.substr(0, 2); }
+		if (digits.length >= 2) { formatted += ')'; }
+		if (digits.length > 2) { formatted += ' ' + digits.substr(2, 3); }
+		if (digits.length > 5) { formatted += '-' + digits.substr(5, 2); }
+		if (digits.length > 7) { formatted += '-' + digits.substr(7, 2); }
+
+		this.value = formatted;
+	});
+
+	// Letters only (Cyrillic/Latin), strip anything else as the user types.
+	$('#input-feedback-name').on('input', function() {
+		var cleaned = this.value.replace(/[^a-zA-Zа-яА-ЯіІїЇєЄёЁ'\- ]/g, '');
+		if (cleaned !== this.value) { this.value = cleaned; }
+	});
+
+	$('#button-feedback-submit').on('click', function() {
+		$('#feedback-alert').empty();
+		modal.find('.text-danger').empty();
+		modal.find('.form-group').removeClass('has-error');
+
+		$.ajax({
+			url: 'index.php?route=common/feedback/send',
+			type: 'post',
+			data: $('#form-feedback :input'),
+			dataType: 'json',
+			beforeSend: function() {
+				$('#button-feedback-submit').button('loading');
+			},
+			complete: function() {
+				$('#button-feedback-submit').button('reset');
+			},
+			success: function(json) {
+				if (json['error']) {
+					if (json['error']['warning']) {
+						$('#feedback-alert').html('<div class="alert alert-danger">' + json['error']['warning'] + '</div>');
+					}
+
+					for (var key in json['error']) {
+						if (key === 'warning') { continue; }
+						$('#error-feedback-' + key).text(json['error'][key]);
+						$('#input-feedback-' + key).closest('.form-group').addClass('has-error');
+					}
+				} else if (json['success']) {
+					$('#feedback-alert').html('<div class="alert alert-success">' + json['success'] + '</div>');
+					$('#form-feedback')[0].reset();
+
+					setTimeout(function() {
+						modal.modal('hide');
+					}, 2000);
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	});
+})();
+//--></script>]]></add>
+    </operation>
+  </file>
+</modification>
