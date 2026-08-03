@@ -2,7 +2,7 @@
 <p>Виконаний макет знаходиться тут - <a href="/landing/" target="_blank">https://ecoplastics.telbot-test.space/landing/</a>, кнопка "Send Form" веде на сторінку контактів - 2 години</a></p>
 
 <h3>Рівень 2 — Обробка Excel і генерація XML</h3>
-<p><a href="/import/" target="_blank">https://testopencart.telbot-test.space/import/</a> - 9 годин. Excel - файли розміщати в корені проекту</p>.
+<p><a href="/import/" target="_blank">https://testopencart.telbot-test.space/import/</a> - 3 години. Excel - файли розміщати в корені проекту</p>.
 
 <h3>Рівень 3 — Форма і CRM-інтеграція</h3>
 <p>Тут же, у верхньому меню — іконка конверта поруч з телефоном відкриває форму "Зворотній зв'язок" (валідація імені/телефону, захист від спаму без капчі). При відправці заявка автоматично йде в SalesDrive. Синхронізація в Діловод — кнопка в адмінці: <b>Розширення → Модулі → Feedback</b>. Якщо SalesDrive або Діловод недоступні — приходить сповіщення в Telegram.  Доступи - aromantsov1@gmail.com/test979440, Dilovod - arom@email.ua/test979440. 5 годин.</p>
